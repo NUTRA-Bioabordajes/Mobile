@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "NutraMobile",
+    "slug": "NutraMobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/LOGO-transparente",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/LOGO-transparente",
+      "resizeMode": "contain",
+      "backgroundColor": "#FCF9F2"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/LOGO-transparente",
+        "backgroundColor": "#FCF9F2"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
