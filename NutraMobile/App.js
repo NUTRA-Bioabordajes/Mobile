@@ -1,12 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View, TextInput, Image, ImageBackground } from 'react-native';
+import { Button, StyleSheet, Text, View, TextInput, Image, ImageBackground, SafeAreaView } from 'react-native';
+import React from 'react';
 
 
 export default function App() {
+  const fondo = require('./assets/fondo-login.png')
+  const logo = require('./assets/LOGO-transparente.png')
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Image
-      source={require('./assets/LOGO-transparente.png')}
+      source = {logo}
       />
       <StatusBar style="auto" />
 
@@ -17,7 +20,7 @@ export default function App() {
           placeholder="Ingrese su Usuario"
         />
       </View>
-    </View>
+    </SafeAreaView>
     
   );
 }
