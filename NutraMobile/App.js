@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View, TextInput, Image, ImageBackground, SafeAreaView } from 'react-native';
 import React from 'react';
 import { useFonts } from 'expo-font';
+import styles  from './assets/styles/styles';
 
 //npx expo install expo-font 
 const logo = require('./assets/images/LOGO-transparente.png')
@@ -34,6 +35,11 @@ export default function App() {
            
         </View>
       </View>
+      <View style={styles.diagnosticos}>
+      <Text style={styles.subtitulo}>Diagnósticos</Text>
+      <Text style={styles.subtitulo}>Intolerancias</Text>
+
+      </View>
 
     
     </SafeAreaView>
@@ -41,47 +47,3 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FCF9F2',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  titulo:{
-    //flex: 3,
-    fontFamily: 'Inter',
-    fontSize: 24,
-    margin: 50
-  },
-  fotoPerfil:{
-    flex: 1,
-    justifyContent: 'center',
-    width: '120px',
-    height: '120px',
-    flexDirection: 'row'
-  },
-  user:{
-    flexDirection: 'row',
-   
-
-  },
-  nombre:{
-    fontFamily: 'Inter',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: '20px',
-    margin: '5px'
-  },
-  edad:{
-    fontFamily: 'Inter',
-    fontSize: 18,
-    //opacity: '0.6',
-    margin: '5px'
-
-  },
-  barrio:{
-    flexDirection: 'row'
-  }
-
-});
