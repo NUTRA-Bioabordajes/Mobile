@@ -1,0 +1,15 @@
+{
+    "usuario": {
+        "nombre": "Felipe",
+        "edad": 8,
+        "barrio": "Caballito",
+        "foto": "https://www.floatingwindturbineucm.com/wp-content/uploads/PERFIL-VACIO-1024x1024.png",
+        "diagnosticos": [
+            "TDAH"
+        ],
+        "intolerancias": [
+            "Gluten",
+            "Caseína"
+        ]
+    }
+}
