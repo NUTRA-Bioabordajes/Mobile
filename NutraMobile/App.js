@@ -35,12 +35,30 @@ export default function App() {
            
         </View>
       </View>
-      <View style={styles.diagnosticos}>
-      <Text style={styles.subtitulo}>Diagnósticos</Text>
-      <Text style={styles.subtitulo}>Intolerancias</Text>
 
+      <View style={styles.fichaMedica}>
+        <View style={styles.categoria}>
+          <Text style={styles.subtitulo}>Diagnósticos:</Text>
+          <View style={styles.tagContainer}>
+            <View style={styles.tagVerde}>
+              <Text style={styles.textDiagnostico}>TDAH</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.categoria}>
+          <Text style={styles.subtitulo}>Intolerancias:</Text>
+          <View style={styles.tagContainer}>
+            <View style={styles.tagRojo}>
+              <Text style={styles.textIntolerancia}>Gluten</Text>
+            </View>
+            <View style={styles.tagRojo}>
+              <Text style={styles.textIntolerancia}>Caseína</Text>
+            </View>
+          </View>
+        </View>
       </View>
-
+      
     
     </SafeAreaView>
     

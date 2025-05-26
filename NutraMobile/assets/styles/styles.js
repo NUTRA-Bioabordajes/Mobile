@@ -50,6 +50,37 @@ const styles = ({
       margin: 50,
       fontWeight: 'bold',
       textAlign: 'left'
+    },
+    tagVerde: {
+      backgroundColor: '#E7E6DC',
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 15,
+      marginRight: 8,
+      marginBottom: 8,
+    },
+    textDiagnostico: {
+      fontSize: 14,
+      color: '#4C5B33',
+      fontFamily: 'Inter',
+      fontWeight: 'bold'
+    },
+    tagRojo: {
+      backgroundColor: '#E0CAC7',
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 15,
+      marginRight: 8,
+      marginBottom: 8,
+    },
+    textIntolerancia: {
+      fontSize: 14,
+      color: '#5E0B00',
+      fontFamily: 'Inter',
+      fontWeight: 'bold'
+    },
+    tagContainer:{
+      flexDirection: 'row'
     }
 })
 
