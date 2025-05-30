@@ -1,5 +1,10 @@
-import { StyleSheet } from "react-native"
+import useState from 'react';
+import { StyleSheet } from "react-native";
+import { useFonts } from 'expo-font';
 
+useFonts({
+  'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
+});
 const styles = StyleSheet.create({
     container: {
       flex: 1,

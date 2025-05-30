@@ -10,12 +10,10 @@ import styles from '../../assets/styles/styles.js';
 
 
 export default function perfil() {
+  
     
     const iconoUbi = require('../../assets/icons/iconoUbicacion.png')
     const navigation = useNavigation();
-    useFonts({
-      'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
-    });
   
     
     return (
