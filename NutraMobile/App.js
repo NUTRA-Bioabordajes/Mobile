@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import { NavigationContainer} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -11,7 +12,6 @@ import tienda from './src/screens/Tienda';
 
 //npx expo install expo-font 
 //const logo = require('./assets/images/LOGO-transparente.png')
-
 
 
 const imgPerfil = {uri: 'https://www.floatingwindturbineucm.com/wp-content/uploads/PERFIL-VACIO-1024x1024.png'};
@@ -106,12 +106,24 @@ function MyTabs() {
             <Ionicons name="person" size={24} color={color} />
            ),
         }}
+        
       />
     </Tab.Navigator>
   );
 }
 
 export default function App() {
+  
+  const [usuario, setUsuario] = useState(null);
+  useEffect(() => {
+  console.log("aca") ;
+  fetch('https://23c7-200-73-176-50.ngrok-free.app/usuario') 
+    .then(res => res.json())
+    .then(data => console.log(data) /*setUsuario(data.usuario) */)
+    .catch(err => console.error('Error cargando usuario:', err));
+}, []);
+
+
   return (
     <NavigationContainer>
       <MyTabs />

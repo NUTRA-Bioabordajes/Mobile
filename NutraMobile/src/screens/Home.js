@@ -3,7 +3,7 @@ import styles from '../../assets/styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 
-export default function home() {
+export default function Home() {
     useFonts({
         'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
       });
