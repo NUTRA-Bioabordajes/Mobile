@@ -1,10 +1,6 @@
-import useState from 'react';
-import { StyleSheet } from "react-native";
-import { useFonts } from 'expo-font';
 
-useFonts({
-  'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
-});
+import { StyleSheet } from "react-native";
+
 const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -51,7 +47,7 @@ const styles = StyleSheet.create({
     subtitulo:{
       fontFamily: 'Inter',
       fontSize: 20,
-      margin: 50,
+      margin: 10,
       fontWeight: 'bold',
       textAlign: 'left'
     },

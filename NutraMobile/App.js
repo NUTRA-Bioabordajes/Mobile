@@ -13,7 +13,7 @@ import tienda from './src/screens/Tienda';
 //const logo = require('./assets/images/LOGO-transparente.png')
 
 
-// SACAR USE FONTS DE STYLES.
+
 const imgPerfil = {uri: 'https://www.floatingwindturbineucm.com/wp-content/uploads/PERFIL-VACIO-1024x1024.png'};
 const StackPerfil = createNativeStackNavigator();
 const StackHome = createNativeStackNavigator();
@@ -58,13 +58,10 @@ function StackFavoritosNavigator() {
 function StackPerfilNavigator() {
   return (
     <StackPerfil.Navigator>
-      <StackPerfil.Screen name="perfil" component={perfil} />
+      <StackPerfil.Screen name="perfil" component={perfil}   options={{headerShown: false}}/>
     </StackPerfil.Navigator>
   );
 }
-
-
-
 
 
 function MyTabs() {
@@ -90,7 +87,7 @@ function MyTabs() {
       <Tab.Screen name="recetas"   component={StackRecetasNavigator}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name="person" size={24} color={color} />
+            <Ionicons name="restaurant" size={24} color={color} />
               ),
             }}
       />
@@ -98,7 +95,7 @@ function MyTabs() {
       <Tab.Screen name="favoritos"   component={StackFavoritosNavigator}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name="person" size={24} color={color} />
+            <Ionicons name="heart" size={24} color={color} />
               ),
             }}
       />
