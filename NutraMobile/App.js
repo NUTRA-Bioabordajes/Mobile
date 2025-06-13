@@ -4,7 +4,7 @@ import { NavigationContainer} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import perfil from './src/screens/Perfil';
+import erfil from './src/screens/Perfil';
 import home from './src/screens/Home';
 import favoritos from './src/screens/Favoritos';
 import recetas from './src/screens/Recetas';
@@ -58,7 +58,7 @@ function StackFavoritosNavigator() {
 function StackPerfilNavigator() {
   return (
     <StackPerfil.Navigator>
-      <StackPerfil.Screen name="perfil" component={perfil}   options={{headerShown: false}}/>
+      <StackPerfil.Screen name="perfil" component={perfil} options={{headerShown: false}}/>
     </StackPerfil.Navigator>
   );
 }
@@ -113,15 +113,27 @@ function MyTabs() {
 }
 
 export default function App() {
-  
   const [usuario, setUsuario] = useState(null);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
-  console.log("aca") ;
-  fetch('https://23c7-200-73-176-50.ngrok-free.app/usuario') 
-    .then(res => res.json())
-    .then(data => console.log(data) /*setUsuario(data.usuario) */)
-    .catch(err => console.error('Error cargando usuario:', err));
-}, []);
+    const dni = 1001;
+    fetch(`https://23c7-200-73-176-50.ngrok-free.app/usuario/${dni}`) // cambiar link
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`Error status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('Usuario recibido:', data);
+        setUsuario(data);
+      })
+      .catch(err => {
+        console.error('Error cargando usuario:', err);
+        setError(err.message);
+      });
+  }, []);
 
 
   return (
