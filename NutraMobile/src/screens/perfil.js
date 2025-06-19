@@ -53,16 +53,16 @@ export default function Perfil({/*usuario*/} ) {
           style={styles.fotoPerfil} 
         />
         <View style={{ margin: 20 }}> 
-          <Text style={styles.nombre}>{usuario.nombre}</Text> 
+          <Text style={styles.nombre}>{usuario.nombre} {usuario.apellido}</Text> 
            
 
-         <Text style={styles.edad}>{usuario.edad} años</Text>
+         
          
 
           <View style={styles.barrio}>
             <Image source={iconoUbi} resizeMode='contain' />
-            {/* <Text style={styles.edad}>{usuario.barrio}</Text> */}
-            <Text style={styles.edad}>Caballito</Text>
+             <Text style={styles.edad}>{usuario.barrio}</Text> 
+            <Text style={styles.edad}></Text>
           </View>  
         </View>
       </View>
@@ -77,7 +77,7 @@ export default function Perfil({/*usuario*/} ) {
               </View>
             ))} */}
             <View style={styles.tagVerde}>
-              <Text style={styles.textDiagnostico}>TDAH</Text>
+              <Text style={styles.textDiagnostico}>{usuario.diagnostico}</Text>
             </View>
           </View>
         </View>
