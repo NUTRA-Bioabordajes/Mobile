@@ -7,7 +7,7 @@ import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native-web';
 
 // export default function Perfil({usuario}) {
-export default function Perfil(/* {usuario} */) { // Comentamos la prop que dependía de datos externos
+export default function Perfil({/*usuario*/} ) { 
   const iconoUbi = require('../../assets/icons/iconoUbicacion.png');
   const navigation = useNavigation();
 
@@ -15,29 +15,49 @@ export default function Perfil(/* {usuario} */) { // Comentamos la prop que depe
     'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
   });
 
+  const [usuario, setUsuario] = useState(null);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const dni = 1002;
+    fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${dni}`) 
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`Error status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('Usuario recibido:', data);
+        setUsuario(data);
+      })
+      .catch(err => {
+        console.error('Error cargando usuario:', err);
+        setError(err.message);
+      });
+  }, []);
   // Comentamos este bloque que verificaba si había datos, porque ahora no hay conexión
-  /*if (!usuario) {
+  if (!usuario) {
     return <Text>Cargando perfil...</Text>;
-  }*/
-
+  }
+  
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.titulo}>Perfil</Text> 
 
       <View style={styles.user}>
-        {/* <Image source={{ uri: usuario.foto }} resizeMode='contain' style={styles.fotoPerfil} /> */}
+        {/*<Image source={{ uri: usuario.foto }} resizeMode='contain' style={styles.fotoPerfil} /> */}
         <Image 
           source={{ uri: 'https://www.floatingwindturbineucm.com/wp-content/uploads/PERFIL-VACIO-1024x1024.png' }} 
           resizeMode='contain' 
           style={styles.fotoPerfil} 
         />
         <View style={{ margin: 20 }}> 
-          {/* <Text style={styles.nombre}>{usuario.nombre}</Text> */}
-          <Text style={styles.nombre}>Julián</Text> 
+          <Text style={styles.nombre}>{usuario.nombre}</Text> 
+           
 
-          {/* <Text style={styles.edad}>{usuario.edad} años</Text> */}
-          <Text style={styles.edad}>8 años</Text>
+         <Text style={styles.edad}>{usuario.edad} años</Text>
+         
 
           <View style={styles.barrio}>
             <Image source={iconoUbi} resizeMode='contain' />

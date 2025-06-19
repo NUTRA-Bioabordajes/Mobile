@@ -4,7 +4,7 @@ import { NavigationContainer} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import erfil from './src/screens/Perfil';
+import Perfil from './src/screens/Perfil';
 import home from './src/screens/Home';
 import favoritos from './src/screens/Favoritos';
 import recetas from './src/screens/Recetas';
@@ -55,10 +55,15 @@ function StackFavoritosNavigator() {
   );
 }
 
-function StackPerfilNavigator() {
+function StackPerfilNavigator({ usuario }) {
   return (
     <StackPerfil.Navigator>
-      <StackPerfil.Screen name="perfil" component={perfil} options={{headerShown: false}}/>
+      <StackPerfil.Screen
+        name="perfil"
+        options={{ headerShown: false }}
+      >
+        {() => <Perfil usuario={usuario} />}
+      </StackPerfil.Screen>
     </StackPerfil.Navigator>
   );
 }
@@ -113,12 +118,12 @@ function MyTabs() {
 }
 
 export default function App() {
-  const [usuario, setUsuario] = useState(null);
+  /*const [usuario, setUsuario] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const dni = 1001;
-    fetch(`https://23c7-200-73-176-50.ngrok-free.app/usuario/${dni}`) // cambiar link
+    const dni = 1002;
+    fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${dni}`) 
       .then(res => {
         if (!res.ok) {
           throw new Error(`Error status: ${res.status}`);
@@ -133,7 +138,7 @@ export default function App() {
         console.error('Error cargando usuario:', err);
         setError(err.message);
       });
-  }, []);
+  }, []);*/
 
 
   return (
