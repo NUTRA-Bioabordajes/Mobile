@@ -35,7 +35,6 @@ export default function Perfil({/*usuario*/} ) {
         setError(err.message);
       });
   }, []);
-  // Comentamos este bloque que verificaba si había datos, porque ahora no hay conexión
   if (!usuario) {
     return <Text>Cargando perfil...</Text>;
   }

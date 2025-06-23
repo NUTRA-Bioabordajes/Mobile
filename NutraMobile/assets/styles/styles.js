@@ -89,7 +89,48 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     width: '100%',
     marginTop: 10,
-  }
+  },
+  cardProducto: {
+    width: '47%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 10,
+    marginBottom: 16,
+    position: 'relative',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // para Android
+  },
+  imagenProducto: {
+    width: '100%',
+    height: 120,
+    borderRadius: 10,
+    resizeMode: 'cover',
+  },
+  nombreProducto: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: 8,
+    fontFamily: 'Inter',
+  },
+  marcaProducto: {
+    fontSize: 12,
+    color: 'gray',
+    fontFamily: 'Inter',
+  },
+  precioProducto: {
+    fontSize: 14,
+    marginTop: 4,
+    fontFamily: 'Inter',
+  },
+  favBtnProducto: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+
 });
 
 export default styles;

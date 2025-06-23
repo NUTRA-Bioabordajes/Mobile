@@ -26,7 +26,7 @@ const Tab = createBottomTabNavigator();
 function StackHomeNavigator() {
   return (
     <StackHome.Navigator>
-      <StackHome.Screen name="home" component={home} />
+      <StackHome.Screen name="home" options={{ headerShown: false }} component={home} />
     </StackHome.Navigator>
   );
 }
@@ -34,7 +34,7 @@ function StackHomeNavigator() {
 function StackTiendaNavigator() {
   return (
     <StackTienda.Navigator>
-      <StackTienda.Screen name="tienda" component={tienda} />
+      <StackTienda.Screen name="tienda"  options={{ headerShown: false }} component={tienda} />
     </StackTienda.Navigator>
   );
 }
@@ -42,7 +42,7 @@ function StackTiendaNavigator() {
 function StackRecetasNavigator() {
   return (
     <StackRecetas.Navigator>
-      <StackRecetas.Screen name="recetas" component={recetas} />
+      <StackRecetas.Screen name="recetas" options={{ headerShown: false }} component={recetas} />
     </StackRecetas.Navigator>
   );
 }
@@ -50,7 +50,7 @@ function StackRecetasNavigator() {
 function StackFavoritosNavigator() {
   return (
     <StackFavoritos.Navigator>
-      <StackFavoritos.Screen name="favoritos" component={favoritos} />
+      <StackFavoritos.Screen name="favoritos" options={{ headerShown: false }}component={favoritos} />
     </StackFavoritos.Navigator>
   );
 }
