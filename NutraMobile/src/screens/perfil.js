@@ -5,8 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native-web';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-// export default function Perfil({usuario}) {
+
 export default function Perfil({/*usuario*/} ) { 
   const iconoUbi = require('../../assets/icons/iconoUbicacion.png');
   const navigation = useNavigation();
@@ -52,11 +53,7 @@ export default function Perfil({/*usuario*/} ) {
           style={styles.fotoPerfil} 
         />
         <View style={{ margin: 20 }}> 
-          <Text style={styles.nombre}>{usuario.nombre} {usuario.apellido}</Text> 
-           
-
-         
-         
+          <Text style={styles.nombre}>{usuario.nombre} {usuario.apellido}</Text>      
 
           <View style={styles.barrio}>
             <Image source={iconoUbi} resizeMode='contain' />

@@ -5,9 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
 import { Button, ScrollView } from 'react-native-web';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-
-export default function Tienda( ) { 
+export default function Tienda() { 
   const navigation = useNavigation();
 
   useFonts({
@@ -35,25 +35,35 @@ export default function Tienda( ) {
       });
   }, []);*/
 
-  const iconoFavorito = require('../../assets/icons/corazon.png');
+  // Estado para controlar si está marcado como favorito
+  const [favorito, setFavorito] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.titulo}>Tienda</Text>
-  
+
+
+{/*foreach array productos*/}
+
       <View style={styles.cardProducto}>
+        <Image 
+          source={{ uri: 'https://acdn-us.mitiendanube.com/stores/004/957/221/products/diseno-sin-titulo-4ae740abf599f1772b17221869849746-1024-1024.png' }} 
+          resizeMode='contain' 
+          style={styles.imagenProducto} 
+        />
         <Text style={styles.nombreProducto}>Broma de Eucalipto</Text>
         <Text style={styles.marcaProducto}>Ardra</Text>
         <Text style={styles.precioProducto}>$4.050</Text>
-  
-        <TouchableOpacity onPress={() => { /* si querés hacer algo al tocar */ }}>
-          <Image
-            source={iconoFavorito}
-            style={{ width: 24, height: 24 }}
+
+        <TouchableOpacity onPress={() => setFavorito(!favorito)}>
+          <Ionicons 
+            name={favorito ? 'heart' : 'heart-outline'} 
+            size={30} 
+            color={favorito ? 'red' : 'black'} 
           />
         </TouchableOpacity>
-  
+
       </View>
     </SafeAreaView>
   );
