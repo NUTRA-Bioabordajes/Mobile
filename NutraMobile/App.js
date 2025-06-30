@@ -26,7 +26,7 @@ const Tab = createBottomTabNavigator();
 function StackHomeNavigator() {
   return (
     <StackHome.Navigator>
-      <StackHome.Screen name="home" options={{ headerShown: false }} component={home} />
+      <StackHome.Screen name="HomeScreen" options={{ headerShown: false }} component={home} />
     </StackHome.Navigator>
   );
 }
@@ -34,7 +34,7 @@ function StackHomeNavigator() {
 function StackTiendaNavigator() {
   return (
     <StackTienda.Navigator>
-      <StackTienda.Screen name="tienda"  options={{ headerShown: false }} component={tienda} />
+      <StackTienda.Screen name="TiendaScreen" options={{ headerShown: false }} component={tienda} />
     </StackTienda.Navigator>
   );
 }
@@ -42,7 +42,7 @@ function StackTiendaNavigator() {
 function StackRecetasNavigator() {
   return (
     <StackRecetas.Navigator>
-      <StackRecetas.Screen name="recetas" options={{ headerShown: false }} component={recetas} />
+      <StackRecetas.Screen name="RecetasScreen" options={{ headerShown: false }} component={recetas} />
     </StackRecetas.Navigator>
   );
 }
@@ -50,7 +50,7 @@ function StackRecetasNavigator() {
 function StackFavoritosNavigator() {
   return (
     <StackFavoritos.Navigator>
-      <StackFavoritos.Screen name="favoritos" options={{ headerShown: false }}component={favoritos} />
+      <StackFavoritos.Screen name="FavoritosScreen" options={{ headerShown: false }} component={favoritos} />
     </StackFavoritos.Navigator>
   );
 }
@@ -58,10 +58,7 @@ function StackFavoritosNavigator() {
 function StackPerfilNavigator({ usuario }) {
   return (
     <StackPerfil.Navigator>
-      <StackPerfil.Screen
-        name="perfil"
-        options={{ headerShown: false }}
-      >
+      <StackPerfil.Screen name="PerfilScreen" options={{ headerShown: false }}>
         {() => <Perfil usuario={usuario} />}
       </StackPerfil.Screen>
     </StackPerfil.Navigator>

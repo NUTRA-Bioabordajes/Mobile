@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
-import { Button, ScrollView } from 'react-native-web';
+import { ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Tienda() { 
@@ -14,11 +14,12 @@ export default function Tienda() {
     'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
   });
 
-  const [usuario, setUsuario] = useState(null);
+  const [productos, setProductos] = useState([]);
   const [error, setError] = useState(null);
-  /*useEffect(() => {
+  const [favoritos, setFavoritos] = useState({});
+  useEffect(() => {
     
-    fetch(`https://actively-close-beagle.ngrok-free.app/productos`) 
+    fetch('https://actively-close-beagle.ngrok-free.app/productos/') 
       .then(res => {
         if (!res.ok) {
           throw new Error(`Error status: ${res.status}`);
@@ -27,44 +28,50 @@ export default function Tienda() {
       })
       .then(data => {
         console.log('productos recibidos:', data);
-        setUsuario(data);
+        setProductos(data);
       })
       .catch(err => {
         console.error('Error cargando productos:', err);
         setError(err.message);
       });
-  }, []);*/
+  }, []);
 
-  // Estado para controlar si está marcado como favorito
-  const [favorito, setFavorito] = useState(false);
+  const toggleFavorito = (id) => {
+    setFavoritos((prev) => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
 
-  return (
+  /*if (!productos.length && !error) 
+  return <Text>Cargando productos...</Text>;*/
+
+    return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.titulo}>Tienda</Text>
 
-
-{/*foreach array productos*/}
-
-      <View style={styles.cardProducto}>
-        <Image 
-          source={{ uri: 'https://acdn-us.mitiendanube.com/stores/004/957/221/products/diseno-sin-titulo-4ae740abf599f1772b17221869849746-1024-1024.png' }} 
-          resizeMode='contain' 
-          style={styles.imagenProducto} 
-        />
-        <Text style={styles.nombreProducto}>Broma de Eucalipto</Text>
-        <Text style={styles.marcaProducto}>Ardra</Text>
-        <Text style={styles.precioProducto}>$4.050</Text>
-
-        <TouchableOpacity onPress={() => setFavorito(!favorito)}>
-          <Ionicons 
-            name={favorito ? 'heart' : 'heart-outline'} 
-            size={30} 
-            color={favorito ? 'red' : 'black'} 
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+      {productos.map((producto) => (
+        <View key={producto.idProducto} style={styles.cardProducto}>
+          <Image 
+            source={{ uri: producto.Foto || 'https://via.placeholder.com/150' }} 
+            resizeMode='contain' 
+            style={styles.imagenProducto} 
           />
-        </TouchableOpacity>
+          <Text style={styles.nombreProducto}>{producto.Nombre}</Text>
+          <Text style={styles.precioProducto}>${producto.Precio}</Text>
 
-      </View>
+          <TouchableOpacity onPress={() => toggleFavorito(producto.idProducto)}>
+            <Ionicons 
+              name={favoritos[producto.idProducto] ? 'heart' : 'heart-outline'} 
+              size={30} 
+              color={favoritos[producto.idProducto] ? 'red' : 'black'} 
+            />
+          </TouchableOpacity>
+        </View>
+    ))}
+      </ScrollView>
     </SafeAreaView>
   );
 }
