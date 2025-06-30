@@ -43,8 +43,8 @@ export default function Tienda() {
     }));
   };
 
-  /*if (!productos.length && !error) 
-  return <Text>Cargando productos...</Text>;*/
+  if (!productos.length && !error) 
+  return <Text>Cargando productos...</Text>;
 
     return (
     <SafeAreaView style={styles.container}>
@@ -52,26 +52,28 @@ export default function Tienda() {
       <Text style={styles.titulo}>Tienda</Text>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-      {productos.map((producto) => (
-        <View key={producto.idProducto} style={styles.cardProducto}>
-          <Image 
-            source={{ uri: producto.Foto || 'https://via.placeholder.com/150' }} 
-            resizeMode='contain' 
-            style={styles.imagenProducto} 
-          />
-          <Text style={styles.nombreProducto}>{producto.Nombre}</Text>
-          <Text style={styles.precioProducto}>${producto.Precio}</Text>
+  <View style={styles.contenedorProductos}>
+    {productos.map((producto) => (
+      <View key={producto.idProducto} style={styles.cardProducto}>
+        <Image 
+          source={{ uri: producto.Foto || 'https://via.placeholder.com/150' }} 
+          resizeMode='contain' 
+          style={styles.imagenProducto} 
+        />
+        <Text style={styles.nombreProducto}>{producto.Nombre}</Text>
+        <Text style={styles.precioProducto}>${producto.Precio}</Text>
 
-          <TouchableOpacity onPress={() => toggleFavorito(producto.idProducto)}>
-            <Ionicons 
-              name={favoritos[producto.idProducto] ? 'heart' : 'heart-outline'} 
-              size={30} 
-              color={favoritos[producto.idProducto] ? 'red' : 'black'} 
-            />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={() => toggleFavorito(producto.idProducto)}>
+          <Ionicons 
+            name={favoritos[producto.idProducto] ? 'heart' : 'heart-outline'} 
+            size={30} 
+            color={favoritos[producto.idProducto] ? 'red' : 'black'} 
+          />
+        </TouchableOpacity>
+      </View>
     ))}
-      </ScrollView>
+  </View>
+</ScrollView>
     </SafeAreaView>
   );
 }

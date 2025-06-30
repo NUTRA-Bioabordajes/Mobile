@@ -68,7 +68,9 @@ function StackPerfilNavigator({ usuario }) {
 
 function MyTabs() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{ headerShown: false }} 
+    >
       
       <Tab.Screen name="home"   component={StackHomeNavigator}
         options={{
@@ -80,6 +82,7 @@ function MyTabs() {
       
       <Tab.Screen name="tienda"   component={StackTiendaNavigator}
         options={{
+          
           tabBarIcon: ({ color }) => (
             <Ionicons name="bag" size={24} color={color} />
               ),

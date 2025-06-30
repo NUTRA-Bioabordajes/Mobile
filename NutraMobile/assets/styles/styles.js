@@ -90,8 +90,14 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
   },
+  contenedorProductos: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
   cardProducto: {
-    width: '47%',
+    width:'48%',
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 10,
