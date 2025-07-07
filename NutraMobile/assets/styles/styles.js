@@ -136,6 +136,9 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
   },
+  fotoBotones: {
+    width: 300,
+  }
   
 
 });

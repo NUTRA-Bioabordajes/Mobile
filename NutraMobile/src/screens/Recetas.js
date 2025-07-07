@@ -1,7 +1,11 @@
-import { Button, StyleSheet, Text, View, TextInput, Image, ImageBackground, SafeAreaView } from 'react-native';
-import styles from '../../assets/styles/styles.js';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, Image, ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
+import { ScrollView } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Recetas() {
     const navigation = useNavigation();
@@ -14,8 +18,8 @@ export default function Recetas() {
     const [error, setError] = useState(null);
     const [favoritos, setFavoritos] = useState({});
     useEffect(() => {
-    
-      fetch('https://actively-close-beagle.ngrok-free.app/recetas/') 
+      const dni = 1002;
+      fetch(`https://actively-close-beagle.ngrok-free.app/recetas/${dni}`) 
         .then(res => {
           if (!res.ok) {
             throw new Error(`Error status: ${res.status}`);
@@ -32,6 +36,13 @@ export default function Recetas() {
         });
     }, []);
 
+    const toggleFavorito = (id) => {
+      setFavoritos((prev) => ({
+        ...prev,
+        [id]: !prev[id]
+      }));
+    };
+
    if (!recetas.length && !error)
     return <Text>Cargando productos...</Text>
     
@@ -43,8 +54,21 @@ export default function Recetas() {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
       <View style={styles.contenedorProductos}>
      {recetas.map((recetas) => (
-      <View key={receta.idReceta} style={styles.cardProducto}>
-        <Text style={styles.nombreProducto}>{receta.Nombre}</Text>
+      <View key={recetas.idReceta} style={styles.cardProducto}>
+         <Image 
+          source={{ uri: recetas.Foto }} 
+          resizeMode='contain' 
+          style={styles.imagenProducto} 
+        />
+        
+        <Text style={styles.nombreProducto}>{recetas.Nombre}</Text> 
+        <TouchableOpacity onPress={() => toggleFavorito(recetas.idReceta)}>
+          <Ionicons 
+            name={favoritos[recetas.idReceta] ? 'heart' : 'heart-outline'} 
+            size={30} 
+            color={favoritos[recetas.idReceta] ? 'red' : 'black'} 
+          />
+        </TouchableOpacity>
       </View>
     ))}
   </View>

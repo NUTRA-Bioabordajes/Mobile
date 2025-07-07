@@ -4,12 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
-import { ScrollView } from 'react-native-web';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 export default function Perfil({/*usuario*/} ) { 
   const iconoUbi = require('../../assets/icons/iconoUbicacion.png');
+  const btnPerfil = require('../../assets/images/botonesPerfil.png')
   const navigation = useNavigation();
 
   useFonts({
@@ -17,9 +17,10 @@ export default function Perfil({/*usuario*/} ) {
   });
 
   const [usuario, setUsuario] = useState(null);
+  const [intolerancias, setIntolerancias] = useState(null);
   const [error, setError] = useState(null);
   useEffect(() => {
-    const dni = 1002;
+    const dni = 1003;
     fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${dni}`) 
       .then(res => {
         if (!res.ok) {
@@ -35,6 +36,23 @@ export default function Perfil({/*usuario*/} ) {
         console.error('Error cargando usuario:', err);
         setError(err.message);
       });
+
+      fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${dni}/intolerancias`) 
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`Error status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('intolerancias recibidas:', data);
+        setIntolerancias(data);
+      })
+      .catch(err => {
+        console.error('Error cargando intolerancias:', err);
+        setError(err.message);
+      });
+
   }, []);
   if (!usuario) {
     return <Text>Cargando perfil...</Text>;
@@ -46,9 +64,8 @@ export default function Perfil({/*usuario*/} ) {
       <Text style={styles.titulo}>Perfil</Text> 
 
       <View style={styles.user}>
-        {/*<Image source={{ uri: usuario.foto }} resizeMode='contain' style={styles.fotoPerfil} /> */}
         <Image 
-          source={{ uri: 'https://www.floatingwindturbineucm.com/wp-content/uploads/PERFIL-VACIO-1024x1024.png' }} 
+          source={{ uri: usuario.foto }} 
           resizeMode='contain' 
           style={styles.fotoPerfil} 
         />
@@ -67,11 +84,6 @@ export default function Perfil({/*usuario*/} ) {
         <View style={styles.categoria}>
           <Text style={styles.subtitulo}>Diagnósticos:</Text>
           <View style={styles.tagContainer}>
-            {/* {usuario.diagnosticos.map((diag, index) => (
-              <View key={index} style={styles.tagVerde}>
-                <Text style={styles.textDiagnostico}>{diag}</Text>
-              </View>
-            ))} */}
             <View style={styles.tagVerde}>
               <Text style={styles.textDiagnostico}>{usuario.diagnostico}</Text>
             </View>
@@ -81,20 +93,20 @@ export default function Perfil({/*usuario*/} ) {
         <View style={styles.categoria}>
           <Text style={styles.subtitulo}>Intolerancias:</Text>
           <View style={styles.tagContainer}>
-            {/* {usuario.intolerancias.map((intol, index) => (
-              <View key={index} style={styles.tagRojo}>
-                <Text style={styles.textIntolerancia}>{intol}</Text>
+            {intolerancias.map((Intolerancias) => (
+              <View  key={intolerancias.idIntolerancias} style={styles.tagRojo}>
+                <Text style={styles.textIntolerancia}>{Intolerancias.Nombre}</Text>
               </View>
-            ))} */}
-            <View style={styles.tagRojo}>
-              <Text style={styles.textIntolerancia}>Gluten</Text>
-            </View>
-            <View style={styles.tagRojo}>
-              <Text style={styles.textIntolerancia}>Caseína</Text>
-            </View>
+            ))} 
           </View>
         </View>
       </View>
+      <Image 
+          source={ btnPerfil } 
+          resizeMode='contain' 
+          style = {styles.fotoBotones}
+         
+        />
     </SafeAreaView>
   );
 }
