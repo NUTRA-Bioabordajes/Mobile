@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, ImageBackground, SafeAreaView, TouchableOpacity, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import DetalleProducto from './DetalleProducto.js'
 
 export default function Tienda() { 
   const navigation = useNavigation();
@@ -54,7 +55,7 @@ export default function Tienda() {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
   <View style={styles.contenedorProductos}>
     {productos.map((producto) => (
-      <View key={producto.idProducto} style={styles.cardProducto}>
+      <Pressable key={producto.idProducto} style={styles.cardProducto} onPress={() => navigation.navigate('DetalleProducto', { producto })}>
         <Image 
           source={{ uri: producto.Foto || 'https://via.placeholder.com/150' }} 
           resizeMode='contain' 
@@ -70,7 +71,7 @@ export default function Tienda() {
             color={favoritos[producto.idProducto] ? 'red' : 'black'} 
           />
         </TouchableOpacity>
-      </View>
+      </Pressable>
     ))}
   </View>
 </ScrollView>

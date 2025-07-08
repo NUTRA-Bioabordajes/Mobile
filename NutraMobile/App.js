@@ -10,7 +10,7 @@ import favoritos from './src/screens/Favoritos';
 import recetas from './src/screens/Recetas';
 import tienda from './src/screens/Tienda';
 import detalleReceta from './src/screens/DetalleReceta'
-
+import detalleProducto from './src/screens/DetalleProducto'
 //npx expo install expo-font 
 //const logo = require('./assets/images/LOGO-transparente.png')
 
@@ -36,6 +36,7 @@ function StackTiendaNavigator() {
   return (
     <StackTienda.Navigator>
       <StackTienda.Screen name="TiendaScreen" options={{ headerShown: false }} component={tienda} />
+      <StackRecetas.Screen name="DetalleProducto" options={{ headerShown: false }} component={detalleProducto} />
     </StackTienda.Navigator>
   );
 }

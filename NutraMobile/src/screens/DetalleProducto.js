@@ -8,19 +8,19 @@ import { ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-export default function DetalleReceta() {
+export default function DetalleProducto() {
 const route = useRoute();
-  const { receta } = route.params;
+  const { producto } = route.params;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>{receta.Nombre}</Text>
+      <Text style={styles.titulo}>{producto.Nombre}</Text>
       <Image
-        source={{ uri: receta.Foto }}
+        source={{ uri: producto.Foto }}
         resizeMode="contain"
         style={styles.imagenProducto}
       />
-      <Text style={styles.nombre}>{receta.Descripcion}</Text>
+      <Text style={styles.titulo}>{producto.DetalleProducto}</Text>
     </View>
   );
 }
