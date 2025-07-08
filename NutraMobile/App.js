@@ -9,6 +9,7 @@ import home from './src/screens/Home';
 import favoritos from './src/screens/Favoritos';
 import recetas from './src/screens/Recetas';
 import tienda from './src/screens/Tienda';
+import detalleReceta from './src/screens/DetalleReceta'
 
 //npx expo install expo-font 
 //const logo = require('./assets/images/LOGO-transparente.png')
@@ -43,6 +44,7 @@ function StackRecetasNavigator() {
   return (
     <StackRecetas.Navigator>
       <StackRecetas.Screen name="RecetasScreen" options={{ headerShown: false }} component={recetas} />
+      <StackRecetas.Screen name="DetalleRecetas" options={{ headerShown: false }} component={detalleReceta} />
     </StackRecetas.Navigator>
   );
 }

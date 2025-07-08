@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, ImageBackground, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, ImageBackground, SafeAreaView, TouchableOpacity, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import DetalleRecetas from './DetalleReceta.js'
 
 export default function Recetas() {
     const navigation = useNavigation();
@@ -54,7 +55,7 @@ export default function Recetas() {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
       <View style={styles.contenedorProductos}>
      {recetas.map((recetas) => (
-      <View key={recetas.idReceta} style={styles.cardProducto}>
+      <Pressable key={recetas.idReceta} style={styles.cardProducto} onPress={() => navigation.navigate('DetalleRecetas', { receta: recetas })}>
          <Image 
           source={{ uri: recetas.Foto }} 
           resizeMode='contain' 
@@ -69,7 +70,7 @@ export default function Recetas() {
             color={favoritos[recetas.idReceta] ? 'red' : 'black'} 
           />
         </TouchableOpacity>
-      </View>
+      </Pressable>
     ))}
   </View>
 </ScrollView>
