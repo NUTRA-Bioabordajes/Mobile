@@ -19,8 +19,8 @@ export default function Recetas() {
     const [error, setError] = useState(null);
     const [favoritos, setFavoritos] = useState({});
     useEffect(() => {
-      const dni = 1002;
-      fetch(`https://actively-close-beagle.ngrok-free.app/recetas/${dni}`) 
+      const id = 1;
+      fetch(`https://actively-close-beagle.ngrok-free.app/recetas/${id}`) 
         .then(res => {
           if (!res.ok) {
             throw new Error(`Error status: ${res.status}`);

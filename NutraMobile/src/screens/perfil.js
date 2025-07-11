@@ -20,8 +20,8 @@ export default function Perfil({/*usuario*/} ) {
   const [intolerancias, setIntolerancias] = useState(null);
   const [error, setError] = useState(null);
   useEffect(() => {
-    const dni = 1003;
-    fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${dni}`) 
+    const id = 3;
+    fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${id}`) 
       .then(res => {
         if (!res.ok) {
           throw new Error(`Error status: ${res.status}`);
@@ -37,7 +37,7 @@ export default function Perfil({/*usuario*/} ) {
         setError(err.message);
       });
 
-      fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${dni}/intolerancias`) 
+      fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${id}/intolerancias`) 
       .then(res => {
         if (!res.ok) {
           throw new Error(`Error status: ${res.status}`);
@@ -66,7 +66,7 @@ export default function Perfil({/*usuario*/} ) {
       <View style={styles.user}>
         <Image 
           source={{ uri: usuario.foto }} 
-          resizeMode='contain' 
+          resizeMode='cover' 
           style={styles.fotoPerfil} 
         />
         <View style={{ margin: 20 }}> 
@@ -91,15 +91,15 @@ export default function Perfil({/*usuario*/} ) {
         </View>
 
         <View style={styles.categoria}>
-          <Text style={styles.subtitulo}>Intolerancias:</Text>
-          <View style={styles.tagContainer}>
-            {intolerancias.map((Intolerancias) => (
-              <View  key={intolerancias.idIntolerancias} style={styles.tagRojo}>
-                <Text style={styles.textIntolerancia}>{Intolerancias.Nombre}</Text>
-              </View>
-            ))} 
-          </View>
-        </View>
+  <Text style={styles.subtitulo}>Intolerancias:</Text>
+  <View style={styles.tagContainer}>
+    {intolerancias && intolerancias.map((intolerancia, index) => (
+      <View key={index} style={styles.tagRojo}>
+        <Text style={styles.textIntolerancia}>{intolerancia.Nombre}</Text>
+      </View>
+    ))}
+  </View>
+</View>
       </View>
       <Image 
           source={ btnPerfil } 

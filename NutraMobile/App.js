@@ -13,6 +13,7 @@ import detalleReceta from './src/screens/DetalleReceta'
 import detalleProducto from './src/screens/DetalleProducto'
 //npx expo install expo-font 
 //const logo = require('./assets/images/LOGO-transparente.png')
+//npm install --global @expo/ngrok@^4.1.0
 
 
 const imgPerfil = {uri: 'https://www.floatingwindturbineucm.com/wp-content/uploads/PERFIL-VACIO-1024x1024.png'};
