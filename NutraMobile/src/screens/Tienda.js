@@ -8,19 +8,22 @@ import { ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DetalleProducto from './DetalleProducto.js'
 
-export default function Tienda() { 
+
+export default function Tienda() {
   const navigation = useNavigation();
+
 
   useFonts({
     'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
   });
 
+
   const [productos, setProductos] = useState([]);
   const [error, setError] = useState(null);
   const [favoritos, setFavoritos] = useState({});
   useEffect(() => {
-    
-    fetch('https://actively-close-beagle.ngrok-free.app/productos/') 
+   
+    fetch('https://actively-close-beagle.ngrok-free.app/productos/')
       .then(res => {
         if (!res.ok) {
           throw new Error(`Error status: ${res.status}`);
@@ -37,6 +40,7 @@ export default function Tienda() {
       });
   }, []);
 
+
   const toggleFavorito = (id) => {
     setFavoritos((prev) => ({
       ...prev,
@@ -44,31 +48,36 @@ export default function Tienda() {
     }));
   };
 
-  if (!productos.length && !error) 
+
+  if (!productos.length && !error)
   return <Text>Cargando productos...</Text>;
+
 
     return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
+     
       <Text style={styles.titulo}>Tienda</Text>
+
 
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
   <View style={styles.contenedorProductos}>
     {productos.map((producto) => (
       <Pressable key={producto.idProducto} style={styles.cardProducto} onPress={() => navigation.navigate('DetalleProducto', { producto })}>
-        <Image 
-          source={{ uri: producto.Foto || 'https://via.placeholder.com/150' }} 
-          resizeMode='contain' 
-          style={styles.imagenProducto} 
+        <Image
+          source={{ uri: producto.Foto || 'https://via.placeholder.com/150' }}
+          resizeMode='contain'
+          style={styles.imagenProducto}
         />
         <Text style={styles.nombreProducto}>{producto.Nombre}</Text>
         <Text style={styles.precioProducto}>${producto.Precio}</Text>
 
+
         <TouchableOpacity onPress={() => toggleFavorito(producto.idProducto)}>
-          <Ionicons 
-            name={favoritos[producto.idProducto] ? 'heart' : 'heart-outline'} 
-            size={30} 
-            color={favoritos[producto.idProducto] ? 'red' : 'black'} 
+          <Ionicons
+            name={favoritos[producto.idProducto] ? 'heart' : 'heart-outline'}
+            size={30}
+            color={favoritos[producto.idProducto] ? 'red' : 'black'}
           />
         </TouchableOpacity>
       </Pressable>
