@@ -19,7 +19,7 @@ export default function Recetas() {
     const [error, setError] = useState(null);
     const [favoritos, setFavoritos] = useState({});
     useEffect(() => {
-      const id = 1;
+      const id = 3;
       fetch(`https://actively-close-beagle.ngrok-free.app/recetas/${id}`) 
         .then(res => {
           if (!res.ok) {

@@ -20,7 +20,7 @@ export default function Perfil({/*usuario*/} ) {
   const [intolerancias, setIntolerancias] = useState(null);
   const [error, setError] = useState(null);
   useEffect(() => {
-    const id = 3;
+    const id = 4;
     fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${id}`) 
       .then(res => {
         if (!res.ok) {
