@@ -8,13 +8,34 @@ import { ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-
-
 export default function DetalleReceta() {
-const route = useRoute();
+  const route = useRoute();
   const { receta } = route.params;
   const navigation = useNavigation();
 
+
+  const [recetas,setRecetas] = useState([]);
+  const [error, setError] = useState(null);
+  const [favoritos, setFavoritos] = useState({});
+  const [ingredientes, setIngredientes] = useState([]);
+  useEffect(() => {
+    
+    fetch(`https://actively-close-beagle.ngrok-free.app/recetas/${receta.idReceta}/ingredientes`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`Error status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('ingredientes recibidos:', data);
+        setIngredientes(data);
+      })
+      .catch(err => {
+        console.error('Error cargando ingredientes:', err);
+        setError(err.message);
+      });
+  }, []);
 
   const toggleFavorito = (id) => {
     setFavoritos((prev) => ({
@@ -58,9 +79,9 @@ const route = useRoute();
 
       <View>
       <Text style={styles.titulo}>Ingredientes</Text>
-      {ingredientes.map((Ingredientes) => (
-              <View  key={ingredientes.idIngredientes}>
-                <Image style={styles.textIntolerancia}>{Ingredientes.Foto}</Image>
+      {ingredientes.map((Ingrediente) => (
+              <View  key={Ingrediente.Nombre}>
+                <Image source={{ uri: Ingrediente.Foto }} style={{ width: 50, height: 50, backgroundColor: 'lightgray' }}/>
               </View>
       ))}
       </View>
