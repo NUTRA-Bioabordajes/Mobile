@@ -13,7 +13,7 @@ import Recetas from './src/screens/Recetas';
 import Tienda from './src/screens/Tienda';
 import DetalleReceta from './src/screens/DetalleReceta';
 import DetalleProducto from './src/screens/DetalleProducto';
-import Login from './src/screens/Login'; // <-- agregá tu pantalla de login
+import Login from './src/screens/Login';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -65,27 +65,37 @@ function StackPerfilNavigator({ usuario }) {
 function MyTabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="home" component={StackHomeNavigator}
+      <Tab.Screen
+        name="home"
+        component={StackHomeNavigator}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />
         }}
       />
-      <Tab.Screen name="tienda" component={StackTiendaNavigator}
+      <Tab.Screen
+        name="tienda"
+        component={StackTiendaNavigator}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="bag" size={24} color={color} />
         }}
       />
-      <Tab.Screen name="recetas" component={StackRecetasNavigator}
+      <Tab.Screen
+        name="recetas"
+        component={StackRecetasNavigator}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="restaurant" size={24} color={color} />
         }}
       />
-      <Tab.Screen name="favoritos" component={StackFavoritosNavigator}
+      <Tab.Screen
+        name="favoritos"
+        component={StackFavoritosNavigator}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="heart" size={24} color={color} />
         }}
       />
-      <Tab.Screen name="perfil" component={StackPerfilNavigator}
+      <Tab.Screen
+        name="perfil"
+        component={StackPerfilNavigator}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="person" size={24} color={color} />
         }}
@@ -120,18 +130,20 @@ export default function App() {
   }, []);
 
   if (isAuthenticated === null) {
-    return null; // aquí podrías poner un splash screen
+    return null; 
   }
 
   return (
-    <NavigationContainer>
-      {isAuthenticated ? (
-        <MyTabs />
-      ) : (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={Login} />
-        </Stack.Navigator>
-      )}
-    </NavigationContainer>
+      <NavigationContainer>
+        {isAuthenticated ? (
+          <MyTabs />
+        ) : (
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Login" options={{headerShown:false}}>
+              {(props) => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
+            </Stack.Screen>
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>   
   );
 }

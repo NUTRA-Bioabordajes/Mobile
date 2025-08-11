@@ -2,16 +2,12 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ImageBackground } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { useNavigation } from "@react-navigation/native";
 
-export default function Login() {
+export default function Login({ navigation, setIsAuthenticated }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigation = useNavigation();
   const [touched, setTouched] = useState({ username: false, password: false });
   const isDisabled = !username || !password;
-
-
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -25,12 +21,10 @@ export default function Login() {
         { username, password },
         { headers: { "Content-Type": "application/json" } }
       );
-  
-      console.log("Respuesta login:", res.data);  // <--- Log completo
-  
-      if (res.data.success) {
+
+      if (res.data.success == "true") {
         await AsyncStorage.setItem("token", res.data.token);
-        navigation.replace("HomeScreen");
+        setIsAuthenticated(true); // Actualizamos el estado para navegar
       } else {
         Alert.alert("Error", res.data.message || "Credenciales inválidas");
       }
