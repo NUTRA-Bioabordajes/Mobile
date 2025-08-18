@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import jwtDecode from "jwt-decode";
+import jwt_decode from "jwt-decode";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -35,19 +35,23 @@ function StackTiendaNavigator() {
   );
 }
 
-function StackRecetasNavigator() {
+function StackRecetasNavigator({ usuario }) {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="RecetasScreen" options={{ headerShown: false }} component={Recetas} />
+      <Stack.Screen name="RecetasScreen" options={{ headerShown: false }}>
+        {props => <Recetas {...props} usuario={usuario} />}
+      </Stack.Screen>
       <Stack.Screen name="DetalleRecetas" options={{ headerShown: false }} component={DetalleReceta} />
     </Stack.Navigator>
   );
 }
 
-function StackFavoritosNavigator() {
+function StackFavoritosNavigator({ usuario }) {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="FavoritosScreen" options={{ headerShown: false }} component={Favoritos} />
+      <Stack.Screen name="FavoritosScreen" options={{ headerShown: false }}>
+        {props => <Favoritos {...props} usuario={usuario} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
@@ -56,13 +60,13 @@ function StackPerfilNavigator({ usuario }) {
   return (
     <Stack.Navigator>
       <Stack.Screen name="PerfilScreen" options={{ headerShown: false }}>
-        {() => <Perfil usuario={usuario} />}
+        {props => <Perfil {...props} usuario={usuario} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
 }
 
-function MyTabs() {
+function MyTabs({ usuario }) {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
@@ -81,21 +85,21 @@ function MyTabs() {
       />
       <Tab.Screen
         name="recetas"
-        component={StackRecetasNavigator}
+        children={() => <StackRecetasNavigator usuario={usuario} />}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="restaurant" size={24} color={color} />
         }}
       />
       <Tab.Screen
         name="favoritos"
-        component={StackFavoritosNavigator}
+        children={() => <StackFavoritosNavigator usuario={usuario} />}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="heart" size={24} color={color} />
         }}
       />
       <Tab.Screen
         name="perfil"
-        component={StackPerfilNavigator}
+        children={() => <StackPerfilNavigator usuario={usuario} />}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="person" size={24} color={color} />
         }}
@@ -106,26 +110,30 @@ function MyTabs() {
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
     const checkToken = async () => {
-      const token = await AsyncStorage.getItem("token");
-
-      if (token) {
-        try {
-          const decoded = jwtDecode(token);
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+          const decoded = jwt_decode(token);
           const now = Date.now() / 1000;
           if (decoded.exp && decoded.exp > now) {
             setIsAuthenticated(true);
+            setUsuario(decoded);
+             // Guardamos todos los datos del usuario
             return;
           }
-        } catch (err) {
-          console.error("Error decodificando token:", err);
         }
+        setIsAuthenticated(false);
+        setUsuario(null);
+      } catch (err) {
+        console.error("Error decodificando token:", err);
+        setIsAuthenticated(false);
+        setUsuario(null);
       }
-      setIsAuthenticated(false);
     };
-
     checkToken();
   }, []);
 
@@ -134,16 +142,16 @@ export default function App() {
   }
 
   return (
-      <NavigationContainer>
-        {isAuthenticated ? (
-          <MyTabs />
-        ) : (
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Login" options={{headerShown:false}}>
-              {(props) => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
-            </Stack.Screen>
-          </Stack.Navigator>
-        )}
-      </NavigationContainer>   
+    <NavigationContainer>
+      {isAuthenticated ? (
+        <MyTabs usuario={usuario} />
+      ) : (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" options={{ headerShown: false }}>
+            {(props) => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+        </Stack.Navigator>
+      )}
+    </NavigationContainer>
   );
 }

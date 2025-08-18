@@ -15,21 +15,28 @@ export default function Login({ navigation, setIsAuthenticated }) {
       return;
     }
 
+    console.log("username:", username, "password:", password);
+  
     try {
       const res = await axios.post(
         "https://actively-close-beagle.ngrok-free.app/login",
         { username, password },
         { headers: { "Content-Type": "application/json" } }
       );
-
-      if (res.data.success == "true") {
+  
+     
+      console.log("RESPUESTA DEL LOGIN:", res.data);
+  
+      if (res.data.success === true || res.data.success === "true") {
+        console.log("TOKEN RECIBIDO:", res.data.token);
         await AsyncStorage.setItem("token", res.data.token);
-        setIsAuthenticated(true); // Actualizamos el estado para navegar
+        setIsAuthenticated(true);
       } else {
         Alert.alert("Error", res.data.message || "Credenciales inválidas");
       }
     } catch (error) {
       Alert.alert("Error", "No se pudo iniciar sesión");
+      console.error("RESPONSE ERROR:", error.response?.data);
       console.error(error);
     }
   };
