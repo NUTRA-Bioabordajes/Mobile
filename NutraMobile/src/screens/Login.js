@@ -29,8 +29,13 @@ export default function Login({ navigation, setIsAuthenticated }) {
   
       if (res.data.success === true || res.data.success === "true") {
         console.log("TOKEN RECIBIDO:", res.data.token);
+      
         await AsyncStorage.setItem("token", res.data.token);
+        await AsyncStorage.setItem("usuario", JSON.stringify(res.data)); // 👈 guardamos el usuario
+      
         setIsAuthenticated(true);
+      
+        
       } else {
         Alert.alert("Error", res.data.message || "Credenciales inválidas");
       }

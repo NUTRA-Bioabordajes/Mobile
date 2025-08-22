@@ -2,24 +2,47 @@ import { StatusBar } from 'expo-status-bar';
 import { Text, View, Image, SafeAreaView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
 
-export default function Perfil({ usuario }) { 
+export default function Perfil() {
+  const [usuario, setUsuario] = useState(null);
+  const [token, setToken] = useState(null);
+  const [intolerancias, setIntolerancias] = useState(null);
+  const [error, setError] = useState(null);
+  const navigation = useNavigation();
+
   const iconoUbi = require('../../assets/icons/iconoUbicacion.png');
   const btnPerfil = require('../../assets/images/botonesPerfil.png');
-  const navigation = useNavigation();
 
   useFonts({
     'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
   });
 
-  const [intolerancias, setIntolerancias] = useState(null);
-  const [error, setError] = useState(null);
-
+  // Recuperar usuario y token desde AsyncStorage
   useEffect(() => {
-    if (usuario && usuario.id) {
-      fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${usuario.id}/intolerancias`) 
+    const loadData = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem("usuario");
+        const storedToken = await AsyncStorage.getItem("token");
+
+        if (storedUser) setUsuario(JSON.parse(storedUser));
+        if (storedToken) setToken(storedToken);
+      } catch (err) {
+        console.error("Error cargando usuario/token:", err);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  // Fetch de intolerancias usando el token
+  useEffect(() => {
+    if (usuario?.id && token) {
+      fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${usuario.id}/intolerancias`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
         .then(res => {
           if (!res.ok) throw new Error(`Error status: ${res.status}`);
           return res.json();
@@ -31,7 +54,7 @@ export default function Perfil({ usuario }) {
           setError(err.message);
         });
     }
-  }, [usuario?.id]);
+  }, [usuario, token]);
 
   if (!usuario) {
     return <Text>Cargando perfil...</Text>;
