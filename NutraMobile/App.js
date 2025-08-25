@@ -36,12 +36,11 @@ function StackTiendaNavigator() {
 }
 
 function StackRecetasNavigator({ usuario }) {
+  const RecetasWrapper = (props) => <Recetas {...props} usuario={usuario} />;
   return (
     <Stack.Navigator>
-      <Stack.Screen name="RecetasScreen" options={{ headerShown: false }}>
-        {props => <Recetas {...props} usuario={usuario} />}
-      </Stack.Screen>
-      <Stack.Screen name="DetalleRecetas" options={{ headerShown: false }} component={DetalleReceta} />
+      <Stack.Screen name="RecetasScreen" component={RecetasWrapper} />
+      <Stack.Screen name="DetalleReceta" options={{ headerShown: false }} component={DetalleReceta} />
     </Stack.Navigator>
   );
 }
@@ -111,31 +110,41 @@ function MyTabs({ usuario }) {
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [usuario, setUsuario] = useState(null);
+  console.log("App render, isAuthenticated:", isAuthenticated);
 
-  useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        if (token) {
-          const decoded = jwt_decode(token);
-          const now = Date.now() / 1000;
-          if (decoded.exp && decoded.exp > now) {
-            setIsAuthenticated(true);
-            setUsuario(decoded);
-             // Guardamos todos los datos del usuario
-            return;
-          }
+
+ useEffect(() => {
+  const checkToken = async () => {
+    console.log("Verificando token...");
+    try {
+      const token = await AsyncStorage.getItem("token");
+      console.log("Token en storage:", token);
+
+      if (token) {
+        const decoded = jwt_decode(token);
+        console.log("Token decodificado:", decoded);
+
+        const now = Date.now() / 1000;
+        console.log("exp:", decoded.exp, "now:", now);
+
+        if (decoded.exp && decoded.exp > now) {
+          setIsAuthenticated(true);
+          setUsuario(decoded);
+          return;
         }
-        setIsAuthenticated(false);
-        setUsuario(null);
-      } catch (err) {
-        console.error("Error decodificando token:", err);
-        setIsAuthenticated(false);
-        setUsuario(null);
       }
-    };
-    checkToken();
-  }, []);
+
+      setIsAuthenticated(false);
+      setUsuario(null);
+    } catch (err) {
+      console.error("Error decodificando token:", err);
+      setIsAuthenticated(false);
+      setUsuario(null);
+    }
+  };
+  checkToken();
+}, []);
+
 
   if (isAuthenticated === null) {
     return null; 

@@ -6,7 +6,8 @@ import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import DetalleRecetas from './DetalleReceta.js'
+import DetalleReceta from './DetalleReceta.js'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Recetas() {
     const navigation = useNavigation();
@@ -18,9 +19,28 @@ export default function Recetas() {
     const [recetas, setRecetas] = useState([]);
     const [error, setError] = useState(null);
     const [favoritos, setFavoritos] = useState({});
+    const [usuario, setUsuario] = useState(null);
+    const [token, setToken] = useState(null);
+
     useEffect(() => {
-      const id = 3;
-      fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${usuario.id}/recetas`) 
+  const loadUser = async () => {
+    try {
+      const storedUser = await AsyncStorage.getItem("usuario");
+      const storedToken = await AsyncStorage.getItem("token");
+      if (storedUser) setUsuario(JSON.parse(storedUser));
+      if (storedToken) setToken(storedToken);
+    } catch (err) {
+      console.error("Error cargando usuario o token:", err);
+    }
+  };
+  loadUser();
+}, []);
+
+    useEffect(() => {
+      if (!usuario || !token) return;
+      fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${usuario.id}/recetas`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
         .then(res => {
           if (!res.ok) {
             throw new Error(`Error status: ${res.status}`);
@@ -35,7 +55,7 @@ export default function Recetas() {
           console.error('Error cargando recetas:', err);
           setError(err.message);
         });
-    }, []);
+    }, [usuario, token]);
 
     const toggleFavorito = (id) => {
       setFavoritos((prev) => ({
@@ -44,10 +64,12 @@ export default function Recetas() {
       }));
     };
 
-   if (!recetas.length && !error)
-    return <Text>Cargando productos...</Text>
+    if (!usuario) {
+      return <Text>Cargando usuario...</Text>;
+    }
     
     return (
+      
       <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.titulo}>Recetas</Text>
@@ -55,7 +77,7 @@ export default function Recetas() {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
       <View style={styles.contenedorProductos}>
      {recetas.map((recetas) => (
-      <Pressable key={recetas.idReceta} style={styles.cardProducto} onPress={() => navigation.navigate('DetalleRecetas', { receta: recetas })}>
+      <Pressable key={recetas.idReceta} style={styles.cardProducto} onPress={() => navigation.navigate('DetalleReceta', { receta: recetas })}>
          <Image 
           source={{ uri: recetas.Foto }} 
           resizeMode='contain' 

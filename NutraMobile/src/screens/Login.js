@@ -31,8 +31,19 @@ export default function Login({ navigation, setIsAuthenticated }) {
         console.log("TOKEN RECIBIDO:", res.data.token);
       
         await AsyncStorage.setItem("token", res.data.token);
-        await AsyncStorage.setItem("usuario", JSON.stringify(res.data)); // 👈 guardamos el usuario
-      
+        
+          const usuario = {
+            id: res.data.id,
+            nombre: res.data.nombre,
+            apellido: res.data.apellido,
+            barrio: res.data.barrio,
+            foto: res.data.foto,
+            diagnostico: res.data.diagnostico,
+            username: res.data.username
+          };
+
+        await AsyncStorage.setItem("usuario", JSON.stringify(usuario)); // 👈 guardamos el usuario
+
         setIsAuthenticated(true);
       
         
