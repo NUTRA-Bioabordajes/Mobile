@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import jwt_decode from "jwt-decode";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, CommonActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { navigationRef } from "./src/navigation/RootNavigation";
 
+import api from './src/api/api';
 import Perfil from './src/screens/Perfil';
 import Home from './src/screens/Home';
 import Favoritos from './src/screens/Favoritos';
@@ -14,6 +16,7 @@ import Tienda from './src/screens/Tienda';
 import DetalleReceta from './src/screens/DetalleReceta';
 import DetalleProducto from './src/screens/DetalleProducto';
 import Login from './src/screens/Login';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -145,6 +148,29 @@ export default function App() {
   checkToken();
 }, []);
 
+useEffect(() => {
+  if (!navigationRef) return;
+
+  api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      if (error.response?.status === 401) {
+        console.log("⚠️ Token inválido o expirado, redirigiendo a login...");
+        await AsyncStorage.removeItem("token");
+        setIsAuthenticated(false);
+        setUsuario(null);
+
+        navigationRef.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "Login" }],
+          })
+        );
+      }
+      return Promise.reject(error);
+    }
+  );
+}, [navigationRef]);
 
   if (isAuthenticated === null) {
     return null; 

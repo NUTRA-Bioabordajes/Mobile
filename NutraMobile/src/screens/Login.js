@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ImageBackground } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import api from "../api/api"; 
 
 export default function Login({ navigation, setIsAuthenticated }) {
   const [username, setUsername] = useState("");
@@ -18,11 +19,9 @@ export default function Login({ navigation, setIsAuthenticated }) {
     console.log("username:", username, "password:", password);
   
     try {
-      const res = await axios.post(
+      const res = await api.post(
         "https://actively-close-beagle.ngrok-free.app/login",
-        { username, password },
-        { headers: { "Content-Type": "application/json" } }
-      );
+        { username, password });
   
      
       console.log("RESPUESTA DEL LOGIN:", res.data);
