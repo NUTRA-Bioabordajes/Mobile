@@ -40,7 +40,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
             diagnostico: res.data.diagnostico,
             username: res.data.username
           };
-
+          console.log(usuario);
         await AsyncStorage.setItem("usuario", JSON.stringify(usuario));
 
         setIsAuthenticated(true);

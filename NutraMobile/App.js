@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer, CommonActions } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -75,37 +75,27 @@ function MyTabs({ usuario }) {
       <Tab.Screen
         name="home"
         component={StackHomeNavigator}
-        options={{
-          tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
-        }}
+        options={{ tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} /> }}
       />
       <Tab.Screen
         name="tienda"
         component={StackTiendaNavigator}
-        options={{
-          tabBarIcon: ({ color }) => <Ionicons name="bag" size={24} color={color} />,
-        }}
+        options={{ tabBarIcon: ({ color }) => <Ionicons name="bag" size={24} color={color} /> }}
       />
       <Tab.Screen
         name="recetas"
         children={() => <StackRecetasNavigator usuario={usuario} />}
-        options={{
-          tabBarIcon: ({ color }) => <Ionicons name="restaurant" size={24} color={color} />,
-        }}
+        options={{ tabBarIcon: ({ color }) => <Ionicons name="restaurant" size={24} color={color} /> }}
       />
       <Tab.Screen
         name="favoritos"
         children={() => <StackFavoritosNavigator usuario={usuario} />}
-        options={{
-          tabBarIcon: ({ color }) => <Ionicons name="heart" size={24} color={color} />,
-        }}
+        options={{ tabBarIcon: ({ color }) => <Ionicons name="heart" size={24} color={color} /> }}
       />
       <Tab.Screen
         name="perfil"
         children={() => <StackPerfilNavigator usuario={usuario} />}
-        options={{
-          tabBarIcon: ({ color }) => <Ionicons name="person" size={24} color={color} />,
-        }}
+        options={{ tabBarIcon: ({ color }) => <Ionicons name="person" size={24} color={color} /> }}
       />
     </Tab.Navigator>
   );
@@ -116,65 +106,71 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [usuario, setUsuario] = useState(null);
 
-  // 📌 Verificamos token al inicio
   useEffect(() => {
     let logoutTimer;
-  
+
     const handleLogout = async () => {
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("usuario");
       setIsAuthenticated(false);
       setUsuario(null);
-  
+
       navigationRef.dispatch(
         CommonActions.reset({ index: 0, routes: [{ name: "Login" }] })
       );
     };
-  
+
     const checkToken = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
         if (token) {
           const decoded = jwtDecode(token);
           const now = Date.now() / 1000;
-  
+
           if (decoded.exp && decoded.exp > now) {
-            // ✅ Token válido → pedimos datos del usuario
-            const res = await fetch(
-              `https://actively-close-beagle.ngrok-free.app/usuarios/${decoded.id}`,
-              { headers: { Authorization: `Bearer ${token}` } }
-            );
-  
-            if (!res.ok) throw new Error("No se pudo obtener el usuario");
-  
-            const userData = await res.json();
+            // Intentamos traer usuario
+            let userData;
+            try {
+              const res = await fetch(
+                `https://actively-close-beagle.ngrok-free.app/usuarios/${decoded.id}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+
+              if (res.ok) userData = await res.json();
+            } catch (err) {
+              console.warn("No se pudo cargar usuario desde API, cargando de AsyncStorage...");
+              const storedUser = await AsyncStorage.getItem("usuario");
+              if (storedUser) userData = JSON.parse(storedUser);
+            }
+
+            if (!userData) userData = {}; // fallback
+
             setIsAuthenticated(true);
             setUsuario(userData);
+
+            // Guardamos en AsyncStorage
             await AsyncStorage.setItem("usuario", JSON.stringify(userData));
-  
-            // 🔔 Timer de expiración del token
-            const expiresIn = decoded.exp - now; // en segundos
-            logoutTimer = setTimeout(handleLogout, expiresIn * 1000);
-  
+
+            // Timer de expiración
+            const expiresIn = decoded.exp - now;
+            logoutTimer = setTimeout(handleLogout, expiresIn * 1000); // ⚠️ en milisegundos
             return;
           }
         }
-  
-        // ❌ Token inválido
+
         handleLogout();
       } catch (err) {
         console.error("Error verificando token:", err);
         handleLogout();
       }
     };
-  
-    checkToken();
-  
-    return () => clearTimeout(logoutTimer); // limpia el timer si el componente se desmonta
-  }, []);
-  
 
-  // 📌 Manejo global de expiración → redirigir a Login
+    checkToken();
+
+    return () => clearTimeout(logoutTimer);
+  }, []);
+
+  // Interceptor global 401
   useEffect(() => {
     api.interceptors.response.use(
       (response) => response,
@@ -187,10 +183,7 @@ export default function App() {
           setUsuario(null);
 
           navigationRef.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "Login" }],
-            })
+            CommonActions.reset({ index: 0, routes: [{ name: "Login" }] })
           );
         }
         return Promise.reject(error);
@@ -198,9 +191,7 @@ export default function App() {
     );
   }, []);
 
-  if (isAuthenticated === null) {
-    return null; // ⏳ Cargando estado inicial
-  }
+  if (isAuthenticated === null) return null; // loading
 
   return (
     <NavigationContainer ref={navigationRef}>
