@@ -43,7 +43,7 @@ export default function Recetas() {
 
     console.log("Usuario cargado:", usuario);
 
-    fetch(`https://actively-close-beagle.ngrok-free.app/recetas/${userId}`, {
+    fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${userId}/recetas`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {

@@ -3,10 +3,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { navigate } from "../navigation/RootNavigation";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000", 
+  baseURL: "http://localhost:3000",
 });
 
-
+// 📌 Interceptor para agregar el token en cada request
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem("token");
   if (token) {
@@ -15,7 +15,7 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-
+// 📌 Interceptor de respuesta para manejar expiración de token
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -26,10 +26,8 @@ api.interceptors.response.use(
 
       navigate("Login");
     }
-
     return Promise.reject(error);
   }
 );
 
 export default api;
-

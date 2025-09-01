@@ -41,7 +41,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
             username: res.data.username
           };
 
-        await AsyncStorage.setItem("usuario", JSON.stringify(usuario)); // 👈 guardamos el usuario
+        await AsyncStorage.setItem("usuario", JSON.stringify(usuario));
 
         setIsAuthenticated(true);
       
