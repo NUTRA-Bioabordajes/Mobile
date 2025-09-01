@@ -1,17 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { Text, View, Image, SafeAreaView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
 
 export default function Perfil() {
   const [usuario, setUsuario] = useState(null);
-  const [token, setToken] = useState(null);
   const [intolerancias, setIntolerancias] = useState(null);
   const [error, setError] = useState(null);
-  const navigation = useNavigation();
 
   const iconoUbi = require('../../assets/icons/iconoUbicacion.png');
   const btnPerfil = require('../../assets/images/botonesPerfil.png');
@@ -20,50 +17,55 @@ export default function Perfil() {
     'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
   });
 
-  // Recuperar usuario y token desde AsyncStorage
+  // 🔹 Recuperar usuario desde AsyncStorage
   useEffect(() => {
     const loadData = async () => {
       try {
         const storedUser = await AsyncStorage.getItem("usuario");
-        const storedToken = await AsyncStorage.getItem("token");
-
-        if (storedUser) setUsuario(JSON.parse(storedUser));
-        if (storedToken) setToken(storedToken);
+        if (storedUser) {
+          setUsuario(JSON.parse(storedUser));
+        }
       } catch (err) {
-        console.error("Error cargando usuario/token:", err);
+        console.error("Error cargando usuario:", err);
       }
     };
 
     loadData();
   }, []);
 
-  // Fetch de intolerancias usando el token
+  // 🔹 Fetch intolerancias usando el token
   useEffect(() => {
-    if (usuario?.id && token) {
-      fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${usuario.id}/intolerancias`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then(res => {
+    const fetchIntolerancias = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (usuario?.id && token) {
+          const res = await fetch(
+            `https://actively-close-beagle.ngrok-free.app/usuarios/${usuario.id}/intolerancias`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+
           if (!res.ok) throw new Error(`Error status: ${res.status}`);
-          return res.json();
-        })
-        .then(data => {
+          const data = await res.json();
           setIntolerancias(data);
-        })
-        .catch(err => {
-          setError(err.message);
-        });
-    }
-  }, [usuario, token]);
+        }
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchIntolerancias();
+  }, [usuario]);
 
   if (!usuario) {
     return <Text>Cargando perfil...</Text>;
   }
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.titulo}>Perfil</Text> 
+
+      {/* 🔹 Datos de usuario */}
       <View style={styles.user}>
         <Image 
           source={{ uri: usuario.foto }} 
@@ -79,6 +81,7 @@ export default function Perfil() {
         </View>
       </View>
 
+      {/* 🔹 Ficha médica */}
       <View style={styles.fichaMedica}>
         <View style={styles.categoria}>
           <Text style={styles.subtitulo}>Diagnósticos:</Text>
@@ -97,13 +100,18 @@ export default function Perfil() {
                 <Text style={styles.textIntolerancia}>{intolerancia.Nombre}</Text>
               </View>
             ))}
+            {!intolerancias?.length && (
+              <Text style={{ color: "gray" }}>Sin intolerancias registradas</Text>
+            )}
           </View>
         </View>
       </View>
+
+      {/* 🔹 Botones del perfil */}
       <Image 
         source={ btnPerfil } 
         resizeMode='contain' 
-        style = {styles.fotoBotones}
+        style={styles.fotoBotones}
       />
     </SafeAreaView>
   );

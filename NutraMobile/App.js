@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer, CommonActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -16,7 +16,6 @@ import Tienda from './src/screens/Tienda';
 import DetalleReceta from './src/screens/DetalleReceta';
 import DetalleProducto from './src/screens/DetalleProducto';
 import Login from './src/screens/Login';
-
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -115,62 +114,75 @@ export default function App() {
   const [usuario, setUsuario] = useState(null);
   console.log("App render, isAuthenticated:", isAuthenticated);
 
+  useEffect(() => {
+    const checkToken = async () => {
+      console.log("Verificando token...");
+      try {
+        const token = await AsyncStorage.getItem("token");
+        console.log("Token en storage:", token);
 
- useEffect(() => {
-  const checkToken = async () => {
-    console.log("Verificando token...");
-    try {
-      const token = await AsyncStorage.getItem("token");
-      console.log("Token en storage:", token);
+        if (token) {
+          const decoded = jwtDecode(token);
+          console.log("Token decodificado:", decoded);
 
-      if (token) {
-        const decoded = jwt_decode(token);
-        console.log("Token decodificado:", decoded);
+          const now = Date.now() / 1000;
+          console.log("exp:", decoded.exp, "now:", now);
 
-        const now = Date.now() / 1000;
-        console.log("exp:", decoded.exp, "now:", now);
+          if (decoded.exp && decoded.exp > now) {
+            // ✅ Token válido, ahora traemos datos completos del usuario
+            const res = await fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${decoded.id}`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
 
-        if (decoded.exp && decoded.exp > now) {
-          setIsAuthenticated(true);
-          setUsuario(decoded);
-          return;
+            if (!res.ok) throw new Error("No se pudo obtener el usuario");
+
+            const userData = await res.json();
+            console.log("Usuario cargado:", userData);
+
+            setIsAuthenticated(true);
+            setUsuario(userData);
+
+            // Guardamos en AsyncStorage para Perfil.js
+            await AsyncStorage.setItem("usuario", JSON.stringify(userData));
+            return;
+          }
         }
-      }
 
-      setIsAuthenticated(false);
-      setUsuario(null);
-    } catch (err) {
-      console.error("Error decodificando token:", err);
-      setIsAuthenticated(false);
-      setUsuario(null);
-    }
-  };
-  checkToken();
-}, []);
-
-useEffect(() => {
-  if (!navigationRef) return;
-
-  api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      if (error.response?.status === 401) {
-        console.log("⚠️ Token inválido o expirado, redirigiendo a login...");
-        await AsyncStorage.removeItem("token");
         setIsAuthenticated(false);
         setUsuario(null);
-
-        navigationRef.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "Login" }],
-          })
-        );
+      } catch (err) {
+        console.error("Error verificando token:", err);
+        setIsAuthenticated(false);
+        setUsuario(null);
       }
-      return Promise.reject(error);
-    }
-  );
-}, [navigationRef]);
+    };
+    checkToken();
+  }, []);
+
+  useEffect(() => {
+    if (!navigationRef) return;
+
+    api.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (error.response?.status === 401) {
+          console.log("⚠️ Token inválido o expirado, redirigiendo a login...");
+          await AsyncStorage.removeItem("token");
+          await AsyncStorage.removeItem("usuario");
+          setIsAuthenticated(false);
+          setUsuario(null);
+
+          navigationRef.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: "Login" }],
+            })
+          );
+        }
+        return Promise.reject(error);
+      }
+    );
+  }, [navigationRef]);
 
   if (isAuthenticated === null) {
     return null; 
