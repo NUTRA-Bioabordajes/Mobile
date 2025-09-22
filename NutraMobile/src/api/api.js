@@ -1,9 +1,14 @@
+// src/api/api.js
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { navigate } from "../navigation/RootNavigation";
+import { navigationRef } from "../navigation/RootNavigation";
+import { CommonActions } from "@react-navigation/native";
+
+// 📌 Cambiá esta constante por tu URL actual de ngrok o IP local
+const API_BASE_URL = "http://localhost:3000"; 
 
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: API_BASE_URL,
 });
 
 // 📌 Interceptor para agregar el token en cada request
@@ -24,7 +29,14 @@ api.interceptors.response.use(
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("usuario");
 
-      navigate("Login");
+      if (navigationRef.isReady()) {
+        navigationRef.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "Login" }],
+          })
+        );
+      }
     }
     return Promise.reject(error);
   }

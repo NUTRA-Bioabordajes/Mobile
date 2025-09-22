@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ImageBackground } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import jwtDecode from "jwt-decode";
 import api from "../api/api"; 
 
 export default function Login({ navigation, setIsAuthenticated }) {
@@ -21,31 +21,31 @@ export default function Login({ navigation, setIsAuthenticated }) {
     try {
       const res = await api.post(
         "https://actively-close-beagle.ngrok-free.app/login",
-        { username, password });
+        { username, password }
+      );
   
-     
       console.log("RESPUESTA DEL LOGIN:", res.data);
   
       if (res.data.success === true || res.data.success === "true") {
         console.log("TOKEN RECIBIDO:", res.data.token);
-      
-        await AsyncStorage.setItem("token", res.data.token);
         
-          const usuario = {
-            id: res.data.id,
-            nombre: res.data.nombre,
-            apellido: res.data.apellido,
-            barrio: res.data.barrio,
-            foto: res.data.foto,
-            diagnostico: res.data.diagnostico,
-            username: res.data.username
-          };
-          console.log(usuario);
+        // 🔹 Guardamos el token
+        await AsyncStorage.setItem("token", res.data.token);
+
+        // 🔹 Decodificamos el token para sacar el id
+        const decoded = jwtDecode(res.data.token);
+        const userId = decoded.id;
+        console.log("Usuario ID del token:", userId);
+
+        // 🔹 Pedimos los datos completos del usuario
+        const userRes = await api.get(`/usuarios/${userId}`);
+        const usuario = userRes.data;
+        console.log("✅ Usuario recibido:", usuario);
+
+        // 🔹 Guardamos en AsyncStorage
         await AsyncStorage.setItem("usuario", JSON.stringify(usuario));
 
         setIsAuthenticated(true);
-      
-        
       } else {
         Alert.alert("Error", res.data.message || "Credenciales inválidas");
       }
