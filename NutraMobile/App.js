@@ -42,7 +42,7 @@ function StackRecetasNavigator({ usuario }) {
   const RecetasWrapper = (props) => <Recetas {...props} usuario={usuario} />;
   return (
     <Stack.Navigator>
-      <Stack.Screen name="RecetasScreen" component={RecetasWrapper} />
+      <Stack.Screen name="RecetasScreen" options={{ headerShown: false }} component={RecetasWrapper} />
       <Stack.Screen name="DetalleReceta" options={{ headerShown: false }} component={DetalleReceta} />
     </Stack.Navigator>
   );

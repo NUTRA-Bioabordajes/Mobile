@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ImageBackground } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import api from "../api/api";
 
 export default function Login({ navigation, setIsAuthenticated }) {
