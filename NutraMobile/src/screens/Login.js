@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ImageBackground } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwtDecode from "jwt-decode";
-import api from "../api/api"; 
+import api from "../api/api";
 
 export default function Login({ navigation, setIsAuthenticated }) {
   const [username, setUsername] = useState("");
@@ -17,42 +17,43 @@ export default function Login({ navigation, setIsAuthenticated }) {
     }
 
     console.log("username:", username, "password:", password);
-  
+
     try {
-      const res = await api.post(
-        "https://actively-close-beagle.ngrok-free.app/login",
-        { username, password }
-      );
-  
+      // 🔹 Login
+      const res = await api.post("/login", { username, password });
       console.log("RESPUESTA DEL LOGIN:", res.data);
-  
+
       if (res.data.success === true || res.data.success === "true") {
         console.log("TOKEN RECIBIDO:", res.data.token);
-        
-        // 🔹 Guardamos el token
         await AsyncStorage.setItem("token", res.data.token);
 
-        // 🔹 Decodificamos el token para sacar el id
+        // 🔹 Decodificamos token para sacar ID del usuario
         const decoded = jwtDecode(res.data.token);
         const userId = decoded.id;
         console.log("Usuario ID del token:", userId);
 
-        // 🔹 Pedimos los datos completos del usuario
-        const userRes = await api.get(`/usuarios/${userId}`);
-        const usuario = userRes.data;
-        console.log("✅ Usuario recibido:", usuario);
+        // 🔹 Intentamos obtener datos completos del usuario
+        let usuario = null;
+        try {
+          const userRes = await api.get(`/usuarios/${userId}`);
+          usuario = userRes.data;
+          console.log("✅ Usuario recibido:", usuario);
+        } catch (err) {
+          console.warn("No se pudo obtener los datos completos del usuario, se usará fallback:", err);
+          usuario = { id: userId, username }; // fallback mínimo
+        }
 
-        // 🔹 Guardamos en AsyncStorage
+        // 🔹 Guardamos usuario en AsyncStorage
         await AsyncStorage.setItem("usuario", JSON.stringify(usuario));
 
+        // 🔹 Cambiamos estado de autenticación
         setIsAuthenticated(true);
       } else {
         Alert.alert("Error", res.data.message || "Credenciales inválidas");
       }
     } catch (error) {
       Alert.alert("Error", "No se pudo iniciar sesión");
-      console.error("RESPONSE ERROR:", error.response?.data);
-      console.error(error);
+      console.error("RESPONSE ERROR:", error.response?.data || error);
     }
   };
 
@@ -69,10 +70,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
           value={username}
           onChangeText={setUsername}
           onBlur={() => setTouched({ ...touched, username: true })}
-          style={[
-            styles.input,
-            touched.username && !username ? styles.inputError : null
-          ]}
+          style={[styles.input, touched.username && !username ? styles.inputError : null]}
           autoCapitalize="none"
         />
 
@@ -81,10 +79,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
           value={password}
           onChangeText={setPassword}
           onBlur={() => setTouched({ ...touched, password: true })}
-          style={[
-            styles.input,
-            touched.password && !password ? styles.inputError : null
-          ]}
+          style={[styles.input, touched.password && !password ? styles.inputError : null]}
           secureTextEntry
         />
 

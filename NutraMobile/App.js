@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from 'jwt-decode';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { NavigationContainer, CommonActions } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { navigationRef } from "./src/navigation/RootNavigation";
+import { navigationRef, safeResetToLogin } from "./src/navigation/RootNavigation";
 
 import api from "./src/api/api";
 import Perfil from "./src/screens/Perfil";
@@ -115,15 +115,14 @@ export default function App() {
       setIsAuthenticated(false);
       setUsuario(null);
 
-      navigationRef.dispatch(
-        CommonActions.reset({ index: 0, routes: [{ name: "Login" }] })
-      );
+      safeResetToLogin();
     };
 
     const checkToken = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
         if (token) {
+          // FIX: Usar jwtDecode(token)
           const decoded = jwtDecode(token);
           const now = Date.now() / 1000;
 
@@ -182,9 +181,7 @@ export default function App() {
           setIsAuthenticated(false);
           setUsuario(null);
 
-          navigationRef.dispatch(
-            CommonActions.reset({ index: 0, routes: [{ name: "Login" }] })
-          );
+          safeResetToLogin();
         }
         return Promise.reject(error);
       }

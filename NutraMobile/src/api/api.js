@@ -5,7 +5,7 @@ import { navigationRef } from "../navigation/RootNavigation";
 import { CommonActions } from "@react-navigation/native";
 
 // 📌 Cambiá esta constante por tu URL actual de ngrok o IP local
-const API_BASE_URL = "http://localhost:3000"; 
+const API_BASE_URL = "https://actively-close-beagle.ngrok-free.app";
 
 const api = axios.create({
   baseURL: API_BASE_URL,

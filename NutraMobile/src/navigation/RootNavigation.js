@@ -1,9 +1,13 @@
-import { createNavigationContainerRef } from '@react-navigation/native';
+import { createNavigationContainerRef, CommonActions } from '@react-navigation/native';
 
 export const navigationRef = createNavigationContainerRef();
 
-export function navigate(name, params) {
+export function safeResetToLogin() {
   if (navigationRef.isReady()) {
-    navigationRef.navigate(name, params);
+    navigationRef.dispatch(
+      CommonActions.reset({ index: 0, routes: [{ name: "Login" }] })
+    );
+  } else {
+    setTimeout(safeResetToLogin, 100);
   }
 }
