@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -152,7 +152,7 @@ export default function App() {
 
             // Timer de expiración
             const expiresIn = decoded.exp - now;
-            logoutTimer = setTimeout(handleLogout, expiresIn * 1000); // ⚠️ en milisegundos
+            logoutTimer = setTimeout(handleLogout, expiresIn * 1000); //en milisegundos
             return;
           }
         }
