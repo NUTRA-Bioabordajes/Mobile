@@ -71,7 +71,6 @@ export default function Recetas() {
 
   if (!usuario) return <Text>Cargando usuario...</Text>;
 
-  if (error) return <Text>Error: {error}</Text>;
 
   return (
     <SafeAreaView style={styles.container}>

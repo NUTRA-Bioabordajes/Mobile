@@ -38,7 +38,6 @@ export default function DetalleReceta() {
     }));
   };
 
-  if (error) return <Text>Error: {error}</Text>;
 
   return (
     <SafeAreaView style={styles.container}>

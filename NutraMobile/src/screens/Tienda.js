@@ -36,7 +36,6 @@ export default function Tienda() {
   };
 
   if (!productos.length && !error) return <Text>Cargando productos...</Text>;
-  if (error) return <Text>Error: {error}</Text>;
 
   return (
     <SafeAreaView style={styles.container}>
