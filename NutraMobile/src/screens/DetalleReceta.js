@@ -20,7 +20,9 @@ export default function DetalleReceta() {
   const [ingredientes, setIngredientes] = useState([]);
   useEffect(() => {
     
-    fetch(`https://actively-close-beagle.ngrok-free.app/recetas/${receta.idReceta}/ingredientes`)
+    fetch(`https://actively-close-beagle.ngrok-free.app/recetas/${receta.idReceta}/ingredientes`,{
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(res => {
         if (!res.ok) {
           throw new Error(`Error status: ${res.status}`);

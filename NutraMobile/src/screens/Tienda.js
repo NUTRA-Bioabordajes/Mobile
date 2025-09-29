@@ -23,7 +23,9 @@ export default function Tienda() {
   const [favoritos, setFavoritos] = useState({});
   useEffect(() => {
    
-    fetch('https://actively-close-beagle.ngrok-free.app/productos/')
+    fetch('https://actively-close-beagle.ngrok-free.app/productos/',{
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(res => {
         if (!res.ok) {
           throw new Error(`Error status: ${res.status}`);

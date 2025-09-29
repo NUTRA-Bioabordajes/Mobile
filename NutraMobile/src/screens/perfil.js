@@ -17,7 +17,7 @@ export default function Perfil() {
     'Inter': require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf')
   });
 
-  // 🔹 Recuperar usuario desde AsyncStorage
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -33,7 +33,6 @@ export default function Perfil() {
     loadData();
   }, []);
 
-  // 🔹 Fetch intolerancias usando el token
   useEffect(() => {
     const fetchIntolerancias = async () => {
       try {
@@ -65,7 +64,7 @@ export default function Perfil() {
       <StatusBar style="auto" />
       <Text style={styles.titulo}>Perfil</Text> 
 
-      {/* 🔹 Datos de usuario */}
+      {/* Datos de usuario */}
       <View style={styles.user}>
         <Image 
           source={{ uri: usuario.foto }} 
