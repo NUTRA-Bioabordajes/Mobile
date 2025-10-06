@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { navigationRef, safeResetToLogin } from "./src/navigation/RootNavigation";
 
+import { navigationRef, safeResetToLogin } from "./src/navigation/RootNavigation";
 import api from "./src/api/api";
+
+// Screens
 import Perfil from "./src/screens/Perfil";
 import Home from "./src/screens/Home";
 import Favoritos from "./src/screens/Favoritos";
@@ -17,14 +19,18 @@ import DetalleReceta from "./src/screens/DetalleReceta";
 import DetalleProducto from "./src/screens/DetalleProducto";
 import Login from "./src/screens/Login";
 
+// ====================== STACKS ======================
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// ====================== STACKS ======================
 function StackHomeNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="HomeScreen" options={{ headerShown: false }} component={Home} />
+      <Stack.Screen
+        name="HomeScreen"
+        options={{ headerShown: false }}
+        component={Home}
+      />
     </Stack.Navigator>
   );
 }
@@ -32,8 +38,16 @@ function StackHomeNavigator() {
 function StackTiendaNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="TiendaScreen" options={{ headerShown: false }} component={Tienda} />
-      <Stack.Screen name="DetalleProducto" options={{ headerShown: false }} component={DetalleProducto} />
+      <Stack.Screen
+        name="TiendaScreen"
+        options={{ headerShown: false }}
+        component={Tienda}
+      />
+      <Stack.Screen
+        name="DetalleProducto"
+        options={{ headerShown: false }}
+        component={DetalleProducto}
+      />
     </Stack.Navigator>
   );
 }
@@ -42,8 +56,16 @@ function StackRecetasNavigator({ usuario }) {
   const RecetasWrapper = (props) => <Recetas {...props} usuario={usuario} />;
   return (
     <Stack.Navigator>
-      <Stack.Screen name="RecetasScreen" options={{ headerShown: false }} component={RecetasWrapper} />
-      <Stack.Screen name="DetalleReceta" options={{ headerShown: false }} component={DetalleReceta} />
+      <Stack.Screen
+        name="RecetasScreen"
+        options={{ headerShown: false }}
+        component={RecetasWrapper}
+      />
+      <Stack.Screen
+        name="DetalleReceta"
+        options={{ headerShown: false }}
+        component={DetalleReceta}
+      />
     </Stack.Navigator>
   );
 }
@@ -51,7 +73,10 @@ function StackRecetasNavigator({ usuario }) {
 function StackFavoritosNavigator({ usuario }) {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="FavoritosScreen" options={{ headerShown: false }}>
+      <Stack.Screen
+        name="FavoritosScreen"
+        options={{ headerShown: false }}
+      >
         {(props) => <Favoritos {...props} usuario={usuario} />}
       </Stack.Screen>
     </Stack.Navigator>
@@ -61,7 +86,10 @@ function StackFavoritosNavigator({ usuario }) {
 function StackPerfilNavigator({ usuario }) {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="PerfilScreen" options={{ headerShown: false }}>
+      <Stack.Screen
+        name="PerfilScreen"
+        options={{ headerShown: false }}
+      >
         {(props) => <Perfil {...props} usuario={usuario} />}
       </Stack.Screen>
     </Stack.Navigator>
@@ -71,31 +99,70 @@ function StackPerfilNavigator({ usuario }) {
 // ====================== TABS ======================
 function MyTabs({ usuario }) {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: "#FCF9F2",           // fondo marfil
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+          height: 65,
+          position: "absolute",
+          borderTopWidth: 0,
+          shadowColor: "#000",
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+          elevation: 5,
+        },
+        tabBarActiveTintColor: "#000",          // ícono activo: negro
+        tabBarInactiveTintColor: "#C2C6CC",     // íconos inactivos: gris claro
+        tabBarShowLabel: false,                 // sin texto
+      }}
+    >
       <Tab.Screen
         name="home"
         component={StackHomeNavigator}
-        options={{ tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} /> }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={26} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="tienda"
         component={StackTiendaNavigator}
-        options={{ tabBarIcon: ({ color }) => <Ionicons name="bag" size={24} color={color} /> }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bag-outline" size={26} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="recetas"
         children={() => <StackRecetasNavigator usuario={usuario} />}
-        options={{ tabBarIcon: ({ color }) => <Ionicons name="restaurant" size={24} color={color} /> }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="restaurant-outline" size={26} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="favoritos"
         children={() => <StackFavoritosNavigator usuario={usuario} />}
-        options={{ tabBarIcon: ({ color }) => <Ionicons name="heart" size={24} color={color} /> }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="heart-outline" size={26} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="perfil"
         children={() => <StackPerfilNavigator usuario={usuario} />}
-        options={{ tabBarIcon: ({ color }) => <Ionicons name="person" size={24} color={color} /> }}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={26} color={color} />
+          ),
+        }}
       />
     </Tab.Navigator>
   );
@@ -114,7 +181,6 @@ export default function App() {
       await AsyncStorage.removeItem("usuario");
       setIsAuthenticated(false);
       setUsuario(null);
-
       safeResetToLogin();
     };
 
@@ -122,7 +188,6 @@ export default function App() {
       try {
         const token = await AsyncStorage.getItem("token");
         if (token) {
-          // FIX: Usar jwtDecode(token)
           const decoded = jwtDecode(token);
           const now = Date.now() / 1000;
 
@@ -134,7 +199,6 @@ export default function App() {
                 `https://actively-close-beagle.ngrok-free.app/usuarios/${decoded.id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
-
               if (res.ok) userData = await res.json();
             } catch (err) {
               console.warn("No se pudo cargar usuario desde API, cargando de AsyncStorage...");
@@ -147,12 +211,11 @@ export default function App() {
             setIsAuthenticated(true);
             setUsuario(userData);
 
-            // Guardamos en AsyncStorage
             await AsyncStorage.setItem("usuario", JSON.stringify(userData));
 
             // Timer de expiración
             const expiresIn = decoded.exp - now;
-            logoutTimer = setTimeout(handleLogout, expiresIn * 1000); //en milisegundos
+            logoutTimer = setTimeout(handleLogout, expiresIn * 1000);
             return;
           }
         }
@@ -165,11 +228,10 @@ export default function App() {
     };
 
     checkToken();
-
     return () => clearTimeout(logoutTimer);
   }, []);
 
-  // Interceptor global 401
+  // Interceptor global para 401
   useEffect(() => {
     api.interceptors.response.use(
       (response) => response,
@@ -180,7 +242,6 @@ export default function App() {
           await AsyncStorage.removeItem("usuario");
           setIsAuthenticated(false);
           setUsuario(null);
-
           safeResetToLogin();
         }
         return Promise.reject(error);
@@ -188,7 +249,7 @@ export default function App() {
     );
   }, []);
 
-  if (isAuthenticated === null) return null; // loading
+  if (isAuthenticated === null) return null; // Loading inicial
 
   return (
     <NavigationContainer ref={navigationRef}>

@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, Image, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import styles from '../../assets/styles/styles.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import api from '../api/api'; // 🔹 importamos la instancia de Axios con interceptor
+import api from '../api/api';
+
+import detalleRecetaStyles from '../../assets/styles/detalleRecetasStyles';
 
 export default function DetalleReceta() {
   const route = useRoute();
@@ -38,49 +39,77 @@ export default function DetalleReceta() {
     }));
   };
 
-
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={detalleRecetaStyles.container}>
       <StatusBar style="auto" />
 
-      <View style={styles.contenedorDetalle}>
+      {/* Barra superior */}
+      <View style={detalleRecetaStyles.contenedorDetalle}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back-outline" size={28} color="black" />
         </TouchableOpacity>
-        <Text style={styles.detalleTexto}>Detalle</Text>
+        <Text style={detalleRecetaStyles.detalleTexto}>Detalle</Text>
       </View>
 
-      <View>
-        <Image source={{ uri: receta.Foto }} resizeMode="contain" style={styles.imagenProducto} />
-        <Text style={styles.titulo}>{receta.Nombre}</Text>
-        <TouchableOpacity onPress={() => toggleFavorito(receta.idReceta)}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Imagen principal */}
+        <Image
+          source={{ uri: receta.Foto }}
+          style={detalleRecetaStyles.imagenProducto}
+        />
+
+        {/* Nombre y favorito */}
+        <Text style={detalleRecetaStyles.titulo}>{receta.Nombre}</Text>
+        <TouchableOpacity onPress={() => toggleFavorito(receta.idReceta)} style={{ alignSelf: 'center', marginVertical: 8 }}>
           <Ionicons
             name={favoritos[receta.idReceta] ? 'heart' : 'heart-outline'}
             size={30}
             color={favoritos[receta.idReceta] ? 'red' : 'black'}
           />
         </TouchableOpacity>
-        <Text style={styles.titulo}>Descripción</Text>
-        <Text style={styles.nombre}>{receta.Descripcion}</Text>
-      </View>
 
-      <View>
-        <Text style={styles.titulo}>Ingredientes</Text>
-        {ingredientes.map((ingrediente) => (
-          <View key={ingrediente.Nombre}>
-            <Image
-              source={{ uri: ingrediente.Foto }}
-              style={{ width: 50, height: 50, backgroundColor: 'lightgray' }}
-            />
+        {/* Descripción */}
+        <Text style={detalleRecetaStyles.descripcionTitulo}>Descripción</Text>
+        <Text style={detalleRecetaStyles.descripcionTexto}>
+          {receta.Descripcion}
+        </Text>
+
+        {/* Vitaminas */}
+        <View style={detalleRecetaStyles.vitaminasContainer}>
+          <View style={detalleRecetaStyles.vitaminaChip}>
+            <Text style={detalleRecetaStyles.vitaminaTexto}>Vitamina A</Text>
           </View>
-        ))}
-      </View>
+          <View style={detalleRecetaStyles.vitaminaChip}>
+            <Text style={detalleRecetaStyles.vitaminaTexto}>Vitamina C</Text>
+          </View>
+          <View style={detalleRecetaStyles.vitaminaChip}>
+            <Text style={detalleRecetaStyles.vitaminaTexto}>Vitamina K</Text>
+          </View>
+        </View>
 
-      <View style={styles.botonContainer}>
-        <TouchableOpacity style={styles.botonPreparar} onPress={() => console.log("Preparar receta")}>
-          <Text style={styles.botonTexto}>Preparar</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Ingredientes */}
+        <Text style={detalleRecetaStyles.ingredientesTitulo}>Ingredientes</Text>
+        <View style={detalleRecetaStyles.ingredientesContainer}>
+          {ingredientes.map((ingrediente) => (
+            <View key={ingrediente.Nombre} style={detalleRecetaStyles.ingredienteCard}>
+              <Image
+                source={{ uri: ingrediente.Foto }}
+                style={detalleRecetaStyles.ingredienteImg}
+              />
+            </View>
+          ))}
+        </View>
+
+        {/* Botón Preparar */}
+        <View style={detalleRecetaStyles.botonContainer}>
+          <TouchableOpacity
+            style={detalleRecetaStyles.botonPreparar}
+            onPress={() => console.log("Preparar receta")}
+          >
+            <Text style={detalleRecetaStyles.botonTexto}>¡Preparar!</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
