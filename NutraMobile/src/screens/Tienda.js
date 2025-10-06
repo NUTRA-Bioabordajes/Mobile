@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, Image, SafeAreaView, TouchableOpacity, Pressable, ScrollView } from 'react-native';
+import { Text, View, Image, TouchableOpacity, Pressable, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../assets/styles/styles.js';

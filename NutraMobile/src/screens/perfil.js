@@ -1,5 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, Image, SafeAreaView } from 'react-native';
+import { Text, View, Image} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from '../../assets/styles/styles.js';

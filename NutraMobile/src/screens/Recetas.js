@@ -1,11 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
-import { Text, View, Image, SafeAreaView, TouchableOpacity, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { Text, View, Image, TouchableOpacity, Pressable, ScrollView, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from '../../assets/styles/styles.js';
 
 export default function Recetas() {
   const navigation = useNavigation();
@@ -15,10 +16,11 @@ export default function Recetas() {
   });
 
   const [recetas, setRecetas] = useState([]);
-  const [error, setError] = useState(null);
   const [favoritos, setFavoritos] = useState({});
   const [usuario, setUsuario] = useState(null);
   const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Cargar usuario y token desde AsyncStorage
   useEffect(() => {
@@ -30,47 +32,95 @@ export default function Recetas() {
         if (storedToken) setToken(storedToken);
       } catch (err) {
         console.error("Error cargando usuario o token:", err);
+        setError('Error al cargar usuario');
       }
     };
     loadUser();
   }, []);
 
-  // Cargar recetas
+  // Cargar recetas desde la API
+  useEffect(() => {
+    if (!token) return;
+
+    const loadRecetas = async () => {
+      try {
+        const res = await fetch('https://actively-close-beagle.ngrok-free.app/recetas', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        setRecetas(data || []);
+      } catch (err) {
+        console.error('Error cargando recetas:', err);
+        setError('No se pudieron cargar las recetas');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRecetas();
+  }, [token]);
+
+  // Cargar favoritos del usuario
   useEffect(() => {
     if (!usuario || !token) return;
 
-    const userId = parseInt(usuario.id, 10); 
+    const loadFavoritos = async () => {
+      try {
+        const res = await fetch(`https://actively-close-beagle.ngrok-free.app/favoritos/${usuario.id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        console.log("Favoritos recibidos desde API:", data);
 
-    console.log("Usuario cargado:", usuario);
+        const favMap = {};
+        if (Array.isArray(data)) {
+          data.forEach(fav => {
+            if (fav.idReceta) favMap[fav.idReceta] = true;
+          });
+        }
+        setFavoritos(favMap);
+      } catch (err) {
+        console.error("Error cargando favoritos:", err);
+      }
+    };
 
-    fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${userId}/recetas`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        if (!res.ok) throw new Error(`Error status: ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        console.log('Recetas RAW:', data);
-        // Siempre forzamos array aunque venga un solo objeto
-        const recetasArray = Array.isArray(data) ? data : [data];
-        setRecetas(recetasArray);
-      })
-      .catch(err => {
-        console.error('Error cargando recetas:', err);
-        setError(err.message);
-      });
+    loadFavoritos();
   }, [usuario, token]);
 
-  const toggleFavorito = (id) => {
-    setFavoritos(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+  const toggleFavorito = async (idReceta) => {
+    if (!usuario || !token) return;
+
+    const alreadyFav = favoritos[idReceta];
+
+    try {
+      const url = 'https://actively-close-beagle.ngrok-free.app/favoritos';
+      const method = alreadyFav ? 'DELETE' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ idUsuario: usuario.id, idReceta })
+      });
+
+      if (!res.ok) {
+        console.error('Error modificando favorito:', await res.text());
+        return;
+      }
+
+      setFavoritos(prev => ({
+        ...prev,
+        [idReceta]: !prev[idReceta]
+      }));
+    } catch (err) {
+      console.error("Error al modificar favorito:", err);
+    }
   };
 
-  if (!usuario) return <Text>Cargando usuario...</Text>;
+  if (!usuario || loading) return <ActivityIndicator size="large" color="#0000ff" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />;
 
+  if (error) return <Text style={{ color: 'red', textAlign: 'center', marginTop: 20 }}>{error}</Text>;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,7 +130,10 @@ export default function Recetas() {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={styles.contenedorProductos}>
           {recetas.map(receta => (
-            <Pressable key={receta.idReceta} style={styles.cardProducto} onPress={() => navigation.navigate('DetalleReceta', { receta })}
+            <Pressable
+              key={receta.idReceta}
+              style={styles.cardProducto}
+              onPress={() => navigation.navigate('DetalleReceta', { receta })}
             >
               <Image
                 source={{ uri: receta.Foto }}

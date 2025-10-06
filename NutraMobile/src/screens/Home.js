@@ -1,4 +1,5 @@
-import { Button, StyleSheet, Text, View, TextInput, Image, ImageBackground, SafeAreaView } from 'react-native';
+import { Button, StyleSheet, Text, View, TextInput, Image, ImageBackground} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../assets/styles/styles.js';
 import { useNavigation } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
