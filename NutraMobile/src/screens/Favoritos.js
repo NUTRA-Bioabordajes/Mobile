@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../api/api.js'; // tu archivo de axios configurado
+import api from '../api/api.js';
+
+const coloresFondo = ['#F5F3EF', '#EAE8FF', '#F3E5E5', '#EEF3E3']; // alterna entre estos
 
 const Favoritos = () => {
   const navigation = useNavigation();
@@ -30,29 +32,41 @@ const Favoritos = () => {
     fetchFavoritos();
   }, [activeTab]);
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.itemContainer}
-      onPress={() => {
-        if (activeTab === 'Recetas') {
-          navigation.navigate('DetalleReceta', { receta: item });
-        } else {
-          navigation.navigate('DetalleProducto', { producto: item });
-        }
-      }}
-    >
-      <Text style={styles.itemTitle}>
-        {activeTab === 'Recetas' ? item.nombreReceta : item.nombreProducto}
-      </Text>
-      <Text style={styles.itemDate}>
-        {new Date(item.createdAt).toLocaleDateString()}
-      </Text>
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item, index }) => {
+    const backgroundColor = coloresFondo[index % coloresFondo.length];
+  
+    // ✅ Coincidir nombres de campos del backend
+    const nombre =
+      activeTab === 'Recetas' ? item.nombreReceta : item.nombreProducto;
+    const imageUri =
+      activeTab === 'Recetas'
+        ? item.Foto // ← antes era imagenReceta
+        : item.Foto || item.FotoTabla; // ← productos pueden tener una u otra
+  
+    return (
+      <TouchableOpacity
+        style={[styles.card, { backgroundColor }]}
+        onPress={() => {
+          if (activeTab === 'Recetas') {
+            navigation.navigate('DetalleReceta', { receta: item });
+          } else {
+            navigation.navigate('DetalleProducto', { producto: item });
+          }
+        }}
+      >
+        {imageUri && (
+          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+        )}
+        <Text style={styles.cardTitle}>{nombre}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Favoritos</Text>
+
+      {/* Tabs */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'Recetas' && styles.activeTab]}
@@ -60,6 +74,7 @@ const Favoritos = () => {
         >
           <Text style={[styles.tabText, activeTab === 'Recetas' && styles.activeTabText]}>Recetas</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[styles.tab, activeTab === 'Productos' && styles.activeTab]}
           onPress={() => setActiveTab('Productos')}
@@ -68,6 +83,7 @@ const Favoritos = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Lista */}
       {loading ? (
         <ActivityIndicator size="large" color="#7C5DFA" />
       ) : favoritos.length === 0 ? (
@@ -77,9 +93,18 @@ const Favoritos = () => {
           data={favoritos}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
+          contentContainerStyle={{ paddingBottom: 40 }}
         />
       )}
+
+      {/* Texto inferior */}
+      <TouchableOpacity>
+        <Text style={styles.bottomLink}>
+          {activeTab === 'Recetas' ? 'Encontrá más recetas' : 'Encontrá más productos'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -89,20 +114,23 @@ export default Favoritos;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    backgroundColor: '#FBFAFF',
   },
   title: {
     fontSize: 22,
     fontWeight: '600',
+    marginTop: 10,
     marginBottom: 16,
     color: '#1E1E1E',
   },
   tabContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   tab: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 20,
@@ -110,40 +138,48 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   activeTab: {
-    backgroundColor: '#7C5DFA', // color principal Figma
+    backgroundColor: '#D9D5FF',
   },
   tabText: {
     fontSize: 16,
     color: '#8E8E93',
   },
   activeTabText: {
-    color: '#FFFFFF',
-  },
-  itemContainer: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  itemTitle: {
-    fontSize: 18,
-    fontWeight: '500',
     color: '#1E1E1E',
+    fontWeight: '600',
   },
-  itemDate: {
-    fontSize: 14,
-    color: '#8E8E93',
-    marginTop: 4,
+  card: {
+    flex: 1,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 14,
+    marginBottom: 14,
+    height: 150,
+  },
+  image: {
+    width: 70,
+    height: 70,
+    borderRadius: 40,
+    marginBottom: 8,
+  },
+  cardTitle: {
+    fontSize: 15,
+    color: '#1E1E1E',
+    textAlign: 'center',
+    fontWeight: '500',
   },
   emptyText: {
     textAlign: 'center',
     marginTop: 50,
     color: '#8E8E93',
     fontSize: 16,
+  },
+  bottomLink: {
+    textAlign: 'center',
+    fontSize: 15,
+    color: '#6A3DFE',
+    marginTop: 10,
+    fontWeight: '500',
   },
 });

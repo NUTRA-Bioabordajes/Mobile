@@ -62,16 +62,16 @@ export default function Recetas() {
 
   // Cargar favoritos del usuario
   useEffect(() => {
-    if (!usuario || !token) return;
-
+    if (!token) return;
+  
     const loadFavoritos = async () => {
       try {
-        const res = await fetch(`https://actively-close-beagle.ngrok-free.app/favoritos/${usuario.id}`, {
+        const res = await fetch('https://actively-close-beagle.ngrok-free.app/favoritos/recetas', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
-        console.log("Favoritos recibidos desde API:", data);
-
+        console.log("Favoritos recetas recibidos:", data);
+  
         const favMap = {};
         if (Array.isArray(data)) {
           data.forEach(fav => {
@@ -80,12 +80,12 @@ export default function Recetas() {
         }
         setFavoritos(favMap);
       } catch (err) {
-        console.error("Error cargando favoritos:", err);
+        console.error("Error cargando favoritos recetas:", err);
       }
     };
-
+  
     loadFavoritos();
-  }, [usuario, token]);
+  }, [token]);
 
   const toggleFavorito = async (idReceta) => {
     if (!usuario || !token) return;
