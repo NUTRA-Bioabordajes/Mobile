@@ -79,6 +79,17 @@ function StackFavoritosNavigator({ usuario }) {
       >
         {(props) => <Favoritos {...props} usuario={usuario} />}
       </Stack.Screen>
+      
+      <Stack.Screen
+        name="DetalleReceta"
+        options={{ headerShown: false }}
+        component={DetalleReceta}
+      />
+      <Stack.Screen
+        name="DetalleProducto"
+        options={{ headerShown: false }}
+        component={DetalleProducto}
+      />
     </Stack.Navigator>
   );
 }
