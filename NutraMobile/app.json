@@ -4,11 +4,11 @@
     "slug": "NutraMobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/LOGO-transparente",
+    "icon": "./assets/images/LOGO-transparente.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/LOGO-transparente",
+      "image": "./assets/images/LOGO-transparente.png",
       "resizeMode": "contain",
       "backgroundColor": "#FCF9F2"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/LOGO-transparente",
+        "foregroundImage": "./assets/images/LOGO-transparente.png",
         "backgroundColor": "#FCF9F2"
       },
       "edgeToEdgeEnabled": true

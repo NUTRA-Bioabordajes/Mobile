@@ -14,7 +14,6 @@ import Perfil from "./src/screens/Perfil";
 import Home from "./src/screens/Home";
 import Favoritos from "./src/screens/Favoritos";
 import Recetas from "./src/screens/Recetas";
-import Tienda from "./src/screens/Tienda";
 import DetalleReceta from "./src/screens/DetalleReceta";
 import DetalleProducto from "./src/screens/DetalleProducto";
 import Login from "./src/screens/Login";
@@ -35,22 +34,7 @@ function StackHomeNavigator() {
   );
 }
 
-function StackTiendaNavigator() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="TiendaScreen"
-        options={{ headerShown: false }}
-        component={Tienda}
-      />
-      <Stack.Screen
-        name="DetalleProducto"
-        options={{ headerShown: false }}
-        component={DetalleProducto}
-      />
-    </Stack.Navigator>
-  );
-}
+
 
 function StackRecetasNavigator({ usuario }) {
   const RecetasWrapper = (props) => <Recetas {...props} usuario={usuario} />;
@@ -85,11 +69,7 @@ function StackFavoritosNavigator({ usuario }) {
         options={{ headerShown: false }}
         component={DetalleReceta}
       />
-      <Stack.Screen
-        name="DetalleProducto"
-        options={{ headerShown: false }}
-        component={DetalleProducto}
-      />
+      
     </Stack.Navigator>
   );
 }
@@ -136,15 +116,6 @@ function MyTabs({ usuario }) {
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={26} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="tienda"
-        component={StackTiendaNavigator}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="bag-outline" size={26} color={color} />
           ),
         }}
       />
