@@ -15,7 +15,6 @@ import Home from "./src/screens/Home";
 import Favoritos from "./src/screens/Favoritos";
 import Recetas from "./src/screens/Recetas";
 import DetalleReceta from "./src/screens/DetalleReceta";
-import DetalleProducto from "./src/screens/DetalleProducto";
 import Login from "./src/screens/Login";
 
 // ====================== STACKS ======================

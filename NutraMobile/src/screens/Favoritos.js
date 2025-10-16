@@ -4,11 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api/api.js';
 
-const coloresFondo = ['#F5F3EF', '#EAE8FF', '#F3E5E5', '#EEF3E3']; // alterna entre estos
+const coloresFondo = ['#E0CAC7', '#E5E2C5', '#E7E6DC', '#CBD2E2'];
 
 const Favoritos = () => {
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState('Recetas');
   const [favoritos, setFavoritos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,8 +15,7 @@ const Favoritos = () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('token');
-      const endpoint = activeTab === 'Recetas' ? '/favoritos/recetas' : '/favoritos/productos';
-      const { data } = await api.get(endpoint, {
+      const { data } = await api.get('/favoritos/recetas', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setFavoritos(data);
@@ -30,29 +28,17 @@ const Favoritos = () => {
 
   useEffect(() => {
     fetchFavoritos();
-  }, [activeTab]);
+  }, []);
 
   const renderItem = ({ item, index }) => {
     const backgroundColor = coloresFondo[index % coloresFondo.length];
-  
-    // ✅ Coincidir nombres de campos del backend
-    const nombre =
-      activeTab === 'Recetas' ? item.nombreReceta : item.nombreProducto;
-    const imageUri =
-      activeTab === 'Recetas'
-        ? item.Foto // ← antes era imagenReceta
-        : item.Foto || item.FotoTabla; // ← productos pueden tener una u otra
-  
+    const nombre = item.nombreReceta;
+    const imageUri = item.Foto;
+
     return (
       <TouchableOpacity
         style={[styles.card, { backgroundColor }]}
-        onPress={() => {
-          if (activeTab === 'Recetas') {
-            navigation.navigate('DetalleReceta', { receta: item });
-          } else {
-            navigation.navigate('DetalleProducto', { producto: item });
-          }
-        }}
+        onPress={() => navigation.navigate('DetalleReceta', { receta: item })}
       >
         {imageUri && (
           <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
@@ -64,30 +50,12 @@ const Favoritos = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Favoritos</Text>
+      <Text style={styles.title}>Mis Recetas Favoritas</Text>
 
-      {/* Tabs */}
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Recetas' && styles.activeTab]}
-          onPress={() => setActiveTab('Recetas')}
-        >
-          <Text style={[styles.tabText, activeTab === 'Recetas' && styles.activeTabText]}>Recetas</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Productos' && styles.activeTab]}
-          onPress={() => setActiveTab('Productos')}
-        >
-          <Text style={[styles.tabText, activeTab === 'Productos' && styles.activeTabText]}>Productos</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Lista */}
       {loading ? (
-        <ActivityIndicator size="large" color="#7C5DFA" />
+        <ActivityIndicator size="large" color="#CBD2E2"/>
       ) : favoritos.length === 0 ? (
-        <Text style={styles.emptyText}>No hay favoritos aún</Text>
+        <Text style={styles.emptyText}>No hay recetas favoritas aún</Text>
       ) : (
         <FlatList
           data={favoritos}
@@ -99,11 +67,8 @@ const Favoritos = () => {
         />
       )}
 
-      {/* Texto inferior */}
-      <TouchableOpacity>
-        <Text style={styles.bottomLink}>
-          {activeTab === 'Recetas' ? 'Encontrá más recetas' : 'Encontrá más productos'}
-        </Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Recetas')}>
+        <Text style={styles.bottomLink}>Encontrá más recetas</Text>
       </TouchableOpacity>
     </View>
   );
@@ -115,38 +80,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: '#FBFAFF',
+    backgroundColor: '#FCF9F2',
   },
   title: {
     fontSize: 22,
     fontWeight: '600',
-    marginTop: 10,
+    marginTop: 80,
     marginBottom: 16,
     color: '#1E1E1E',
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    marginBottom: 24,
-  },
-  tab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    backgroundColor: '#F0F0F5',
-    marginRight: 10,
-  },
-  activeTab: {
-    backgroundColor: '#D9D5FF',
-  },
-  tabText: {
-    fontSize: 16,
-    color: '#8E8E93',
-  },
-  activeTabText: {
-    color: '#1E1E1E',
-    fontWeight: '600',
   },
   card: {
     flex: 1,
@@ -156,10 +97,11 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 14,
     height: 150,
+    margin: 4
   },
   image: {
-    width: 70,
-    height: 70,
+    width: 75,
+    height: 75,
     borderRadius: 40,
     marginBottom: 8,
   },
@@ -178,7 +120,7 @@ const styles = StyleSheet.create({
   bottomLink: {
     textAlign: 'center',
     fontSize: 15,
-    color: '#6A3DFE',
+    color: '#FFFFFF',
     marginTop: 10,
     fontWeight: '500',
   },
