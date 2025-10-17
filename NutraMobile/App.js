@@ -16,6 +16,7 @@ import Favoritos from "./src/screens/Favoritos";
 import Recetas from "./src/screens/Recetas";
 import DetalleReceta from "./src/screens/DetalleReceta";
 import Login from "./src/screens/Login";
+import Signin from "./src/screens/Signin";
 
 // ====================== STACKS ======================
 const Stack = createNativeStackNavigator();
@@ -241,6 +242,7 @@ export default function App() {
           <Stack.Screen name="Login">
             {(props) => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
           </Stack.Screen>
+          <Stack.Screen name="Signin" component={Signin} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

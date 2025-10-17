@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ImageBackgr
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {jwtDecode} from "jwt-decode";
 import api from "../api/api";
+import Signin from "./Signin";
 
 export default function Login({ navigation, setIsAuthenticated }) {
   const [username, setUsername] = useState("");
@@ -19,7 +20,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
     console.log("username:", username, "password:", password);
 
     try {
-      // 🔹 Login
+      // Login
       const res = await api.post("/login", { username, password });
       console.log("RESPUESTA DEL LOGIN:", res.data);
 
@@ -27,12 +28,12 @@ export default function Login({ navigation, setIsAuthenticated }) {
         console.log("TOKEN RECIBIDO:", res.data.token);
         await AsyncStorage.setItem("token", res.data.token);
 
-        // 🔹 Decodificamos token para sacar ID del usuario
+        //  Decodificamos token para sacar ID del usuario
         const decoded = jwtDecode(res.data.token);
         const userId = decoded.id;
         console.log("Usuario ID del token:", userId);
 
-        // 🔹 Intentamos obtener datos completos del usuario
+        // Intentamos obtener datos completos del usuario
         let usuario = null;
         try {
           const userRes = await api.get(`/usuarios/${userId}`);
@@ -43,10 +44,10 @@ export default function Login({ navigation, setIsAuthenticated }) {
           usuario = { id: userId, username }; // fallback mínimo
         }
 
-        // 🔹 Guardamos usuario en AsyncStorage
+        //  Guardamos usuario en AsyncStorage
         await AsyncStorage.setItem("usuario", JSON.stringify(usuario));
 
-        // 🔹 Cambiamos estado de autenticación
+        // Cambiamos estado de autenticación
         setIsAuthenticated(true);
       } else {
         Alert.alert("Error", res.data.message || "Credenciales inválidas");
@@ -90,6 +91,15 @@ export default function Login({ navigation, setIsAuthenticated }) {
         >
           <Text style={styles.buttonText}>Ingresar</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.signin]}
+          onPress={() => navigation.navigate("Signin")}
+        >
+          <Text style={styles.signinText}>
+          ¿Aún no tienes una cuenta? <Text style={[styles.registro]}>Registrarse</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -103,5 +113,8 @@ const styles = StyleSheet.create({
   inputError: { borderColor: "red" },
   button: { backgroundColor: "#212b36", padding: 15, borderRadius: 8, alignItems: "center" },
   buttonDisabled: { backgroundColor: "#999" },
-  buttonText: { color: "#fff", fontWeight: "bold" }
+  buttonText: { color: "#fff", fontWeight: "bold" },
+  signin:{marginTop: 12},
+  signinText:{color: "#00000", textAlign: "center",fontSize: 14.5},
+  registro: {fontWeight:"bold"}
 });
