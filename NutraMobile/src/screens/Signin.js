@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   Switch,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
@@ -23,7 +23,7 @@ export default function Signin() {
     dni: '',
     edad: '',
     diagnostico: '',
-    idMedicoTratante: '',
+    idMedicoTratante: '', // ahora seleccion único
     sexo: '',
     barrio: '',
     nombrePersonaACargo1: '',
@@ -44,15 +44,15 @@ export default function Signin() {
   });
 
   const [intoleranciasDisponibles, setIntoleranciasDisponibles] = useState([]);
+  const [medicos, setMedicos] = useState([]);
   const [intolerancias, setIntolerancias] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Refs para avanzar entre campos
+  // refs para avanzar entre campos
   const apellidoRef = useRef();
   const dniRef = useRef();
   const edadRef = useRef();
   const diagnosticoRef = useRef();
-  const idMedicoRef = useRef();
   const sexoRef = useRef();
   const fotoRef = useRef();
   const barrioRef = useRef();
@@ -70,7 +70,20 @@ export default function Signin() {
         Alert.alert('Error', 'No se pudieron cargar las intolerancias');
       }
     };
+
+    const fetchMedicos = async () => {
+      try {
+        const res = await axios.get('https://actively-close-beagle.ngrok-free.app/usuariosBack/medicos');
+        const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        setMedicos(data);
+      } catch (err) {
+        console.error('Error cargando medicos:', err.message);
+        Alert.alert('Error', 'No se pudieron cargar los médicos');
+      }
+    };
+
     fetchIntolerancias();
+    fetchMedicos();
   }, []);
 
   const handleChange = (name, value) => {
@@ -83,7 +96,7 @@ export default function Signin() {
       return false;
     }
     if (!formData.idMedicoTratante) {
-      Alert.alert('Error', 'ID Médico tratante es obligatorio');
+      Alert.alert('Error', 'Médico tratante es obligatorio');
       return false;
     }
     if (formData.certificado) {
@@ -93,8 +106,6 @@ export default function Signin() {
         return false;
       }
     }
-
-    // Validación de contraseña
     if (!formData.password || formData.password.length < 8 || !/[A-Z]/.test(formData.password)) {
       Alert.alert('Error', 'La contraseña debe tener al menos 8 caracteres y una mayúscula');
       return false;
@@ -103,7 +114,6 @@ export default function Signin() {
       Alert.alert('Error', 'Las contraseñas no coinciden');
       return false;
     }
-
     return true;
   };
 
@@ -188,21 +198,24 @@ export default function Signin() {
           placeholderTextColor="#E0CAC7"
           value={formData.diagnostico}
           onChangeText={t => handleChange('diagnostico', t)}
-          returnKeyType="next"
-          onSubmitEditing={() => idMedicoRef.current.focus()}
         />
+
+        {/* Selección de médico tratante (único) */}
+        <Text style={styles.label}>Médico tratante</Text>
+        {medicos.map(item => (
+          <TouchableOpacity
+            key={item.id}
+            style={[
+              styles.option,
+              formData.idMedicoTratante === item.id && styles.optionSelected,
+            ]}
+            onPress={() => handleChange('idMedicoTratante', item.id)}
+          >
+            <Text style={styles.optionText}>{item.nombre} {item.apellido}</Text>
+          </TouchableOpacity>
+        ))}
+
         <TextInput
-          ref={idMedicoRef}
-          style={styles.input}
-          placeholder="ID Médico tratante"
-          placeholderTextColor="#E0CAC7"
-          value={formData.idMedicoTratante}
-          keyboardType="numeric"
-          onChangeText={t => handleChange('idMedicoTratante', t)}
-          returnKeyType="next"
-          onSubmitEditing={() => sexoRef.current.focus()}
-        />
-         <TextInput
           ref={sexoRef}
           style={styles.input}
           placeholder="Sexo"
@@ -230,7 +243,8 @@ export default function Signin() {
           value={formData.barrio}
           onChangeText={t => handleChange('barrio', t)}
         />
-        {/* Intolerancias */}
+
+        {/* Intolerancias (múltiple) */}
         <Text style={styles.label}>Intolerancias</Text>
         {intoleranciasDisponibles.map(item => (
           <TouchableOpacity
@@ -384,68 +398,15 @@ export default function Signin() {
 }
 
 const styles = {
-  container: {
-    padding: 20,
-    backgroundColor: '#FCF9F2'
-  },
-  placeholder: {
-    color:'#E0CAC7'
-  },
-  titulo: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    marginTop: 40,
-  },
-  subtitulo: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#E0CAC7',
-    borderRadius: 8,
-    padding: 10,
-    marginVertical: 6,
-    color: '#E0CAC7',
-  },
-  
-  label: {
-    marginTop: 15,
-    fontWeight: 'bold',
-  },
-  option: {
-    padding: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginVertical: 4,
-  },
-  optionSelected: {
-    backgroundColor: '#D1D2C6',
-    borderColor: '#198754',
-  },
-  optionText: {
-    fontSize: 14,
-  },
-  boton: {
-    backgroundColor: '#E0CAC7',
-    color: '#FCF9F2',
-    padding: 12,
-    borderRadius: 8,
-    marginVertical: 20,
-    alignItems: 'center',
-  },
-  botonTexto: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
+  container: { padding: 20, backgroundColor: '#FCF9F2' },
+  titulo: { fontSize: 22, fontWeight: 'bold', marginBottom: 15, marginTop: 40 },
+  subtitulo: { fontSize: 18, fontWeight: '600', marginTop: 20 },
+  input: { borderWidth: 1, borderColor: '#E0CAC7', borderRadius: 8, padding: 10, marginVertical: 6, color: '#E0CAC7' },
+  label: { marginTop: 15, fontWeight: 'bold' },
+  option: { padding: 8, borderRadius: 8, borderWidth: 1, borderColor: '#ccc', marginVertical: 4 },
+  optionSelected: { backgroundColor: '#D1D2C6', borderColor: '#198754' },
+  optionText: { fontSize: 14 },
+  boton: { backgroundColor: '#E0CAC7', color: '#FCF9F2', padding: 12, borderRadius: 8, marginVertical: 20, alignItems: 'center' },
+  botonTexto: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  checkboxContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 },
 };
