@@ -23,7 +23,7 @@ export default function Signin() {
     dni: '',
     edad: '',
     diagnostico: '',
-    idMedicoTratante: '', // ahora seleccion único
+    idMedico: '',
     sexo: '',
     barrio: '',
     nombrePersonaACargo1: '',
@@ -95,7 +95,7 @@ export default function Signin() {
       Alert.alert('Error', 'Edad debe ser un número positivo');
       return false;
     }
-    if (!formData.idMedicoTratante) {
+    if (!formData.idMedico) {
       Alert.alert('Error', 'Médico tratante es obligatorio');
       return false;
     }
@@ -136,7 +136,7 @@ export default function Signin() {
     try {
       await axios.post('https://actively-close-beagle.ngrok-free.app/usuarios/nuevoUsuario', dataToSend);
       Alert.alert('Éxito', 'Usuario creado exitosamente');
-      navigation.navigate('Dashboard');
+      navigation.navigate('Home');
     } catch (err) {
       Alert.alert(
         'Error',
@@ -242,9 +242,9 @@ export default function Signin() {
             key={item.id}
             style={[
               styles.option,
-              formData.idMedicoTratante === item.id && styles.optionSelected,
+              formData.idMedico === item.id && styles.optionSelected,
             ]}
-            onPress={() => handleChange('idMedicoTratante', item.id)}
+            onPress={() => handleChange('idMedico', item.id)}
           >
             <Text style={styles.optionText}>{item.Nombre} {item.Apellido}</Text>
           </TouchableOpacity>

@@ -38,23 +38,21 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    // Timeout o network error
     if (!error.response) {
       console.error("[API] Network Error o timeout:", error.message);
       return Promise.reject(error);
     }
 
-    // Token expirado o inválido
     if (error.response.status === 401 || error.response.status === 403) {
       console.warn("[API] Token expirado o inválido. Cerrando sesión…");
 
-      // Borrar token guardado
       await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("usuario"); // también limpiar usuario
 
-      // Redirigir al login (RootNavigation debe estar configurado)
+      // Redirigir al login
       try {
-        const { navigate } = await import("../navigation/RootNavigation");
-        navigate("Login");
+        const { safeResetToLogin } = await import("../navigation/RootNavigation");
+        safeResetToLogin();
       } catch (navErr) {
         console.error("[API] No se pudo navegar al login:", navErr);
       }
@@ -65,5 +63,6 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 
 export default api;
