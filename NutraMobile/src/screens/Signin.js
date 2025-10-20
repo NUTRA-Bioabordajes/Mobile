@@ -119,12 +119,19 @@ export default function Signin() {
 
   const handleSubmit = async () => {
     if (!validate()) return;
-
+  
     const dataToSend = {
       ...formData,
       intolerancias: intolerancias.map(id => Number(id)),
     };
-
+  
+    if (formData.certificado && formData.vencimiento) {
+      const [month, year] = formData.vencimiento.split('/');
+      dataToSend.vencimiento = `${year}-${month}-01`; 
+    } else {
+      dataToSend.vencimiento = null; 
+    }
+    console.log(dataToSend)
     setLoading(true);
     try {
       await axios.post('https://actively-close-beagle.ngrok-free.app/usuarios/nuevoUsuario', dataToSend);
@@ -199,22 +206,6 @@ export default function Signin() {
           value={formData.diagnostico}
           onChangeText={t => handleChange('diagnostico', t)}
         />
-
-        {/* Selección de médico tratante (único) */}
-        <Text style={styles.label}>Médico tratante</Text>
-        {medicos.map(item => (
-          <TouchableOpacity
-            key={item.id}
-            style={[
-              styles.option,
-              formData.idMedicoTratante === item.id && styles.optionSelected,
-            ]}
-            onPress={() => handleChange('idMedicoTratante', item.id)}
-          >
-            <Text style={styles.optionText}>{item.nombre} {item.apellido}</Text>
-          </TouchableOpacity>
-        ))}
-
         <TextInput
           ref={sexoRef}
           style={styles.input}
@@ -243,6 +234,23 @@ export default function Signin() {
           value={formData.barrio}
           onChangeText={t => handleChange('barrio', t)}
         />
+
+        {/* Selección de médico tratante (único) */}
+        <Text style={styles.label}>Médico tratante</Text>
+        {medicos.map(item => (
+          <TouchableOpacity
+            key={item.id}
+            style={[
+              styles.option,
+              formData.idMedicoTratante === item.id && styles.optionSelected,
+            ]}
+            onPress={() => handleChange('idMedicoTratante', item.id)}
+          >
+            <Text style={styles.optionText}>{item.Nombre} {item.Apellido}</Text>
+          </TouchableOpacity>
+        ))}
+
+        
 
         {/* Intolerancias (múltiple) */}
         <Text style={styles.label}>Intolerancias</Text>
