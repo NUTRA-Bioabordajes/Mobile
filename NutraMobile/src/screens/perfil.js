@@ -6,8 +6,8 @@ import React, { useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
-import { safeResetToLogin } from '../navigation/RootNavigation';
-import api from '../api/api';
+import { safeResetToLogin } from '../navigation/RootNavigation.js';
+import api from '../api/api.js';
 
 export default function Perfil() {
   const [usuario, setUsuario] = useState(null);
@@ -55,7 +55,7 @@ export default function Perfil() {
   }, [usuario]);
 
   // 🔹 Logout
-  const handleLogout = async () => {
+ /* const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("usuario");
       await AsyncStorage.removeItem("token");
@@ -64,6 +64,13 @@ export default function Perfil() {
       console.error("Error al cerrar sesión:", err);
       setError("No se pudo cerrar sesión.");
     }
+  };*/
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("usuario");
+    setIsAuthenticated(false); 
+    safeResetToLogin();        
   };
 
   if (!usuario) {

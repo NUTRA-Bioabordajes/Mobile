@@ -54,7 +54,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
       }
     } catch (error) {
       Alert.alert("Error", "No se pudo iniciar sesión");
-      console.error("RESPONSE ERROR:", error.response?.data || error);
+      console.log("RESPONSE ERROR:", error.response?.data || error);
     }
   };
 
