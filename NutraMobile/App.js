@@ -74,19 +74,18 @@ function StackFavoritosNavigator({ usuario }) {
   );
 }
 
-function StackPerfilNavigator({ usuario }) {
+function StackPerfilNavigator({ usuario, setIsAuthenticated }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="PerfilScreen"
         options={{ headerShown: false }}
       >
-        {(props) => <Perfil {...props} usuario={usuario} />}
+        {(props) => <Perfil {...props} usuario={usuario} setIsAuthenticated={setIsAuthenticated} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
 }
-
 // ====================== TABS ======================
 function MyTabs({ usuario }) {
   return (
@@ -139,13 +138,15 @@ function MyTabs({ usuario }) {
       />
       <Tab.Screen
         name="perfil"
-        children={() => <StackPerfilNavigator usuario={usuario} />}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={26} color={color} />
-          ),
-        }}
-      />
+        children={() => (<StackPerfilNavigator usuario={usuario} setIsAuthenticated={setIsAuthenticated}
+    />
+  )}
+  options={{
+    tabBarIcon: ({ color, size }) => (
+      <Ionicons name="person-outline" size={26} color={color} />
+    ),
+  }}
+/>
     </Tab.Navigator>
   );
 }

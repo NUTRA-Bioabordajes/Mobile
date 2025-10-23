@@ -9,7 +9,8 @@ import { useFonts } from 'expo-font';
 import { safeResetToLogin } from '../navigation/RootNavigation.js';
 import api from '../api/api.js';
 
-export default function Perfil() {
+export default function Perfil({ setIsAuthenticated }) {
+  {
   const [usuario, setUsuario] = useState(null);
   const [intolerancias, setIntolerancias] = useState([]);
   const [error, setError] = useState(null);
@@ -145,4 +146,4 @@ export default function Perfil() {
       {error && <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>}
     </SafeAreaView>
   );
-}
+}}
