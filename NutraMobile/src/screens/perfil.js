@@ -9,7 +9,7 @@ import { useFonts } from 'expo-font';
 import { safeResetToLogin } from '../navigation/RootNavigation.js';
 import api from '../api/api.js';
 
-export default function Perfil({ setIsAuthenticated }) {
+export default function Perfil({ setIsAuthenticated = () => {} }) {
   {
   const [usuario, setUsuario] = useState(null);
   const [intolerancias, setIntolerancias] = useState([]);

@@ -166,16 +166,16 @@ export default function Signin() {
         }
   
         Alert.alert('Bienvenido', 'Cuenta creada y sesión iniciada');
-        navigation.navigate('Home');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'home' }],
+        });
       } else {
         Alert.alert('Error', 'No se pudo iniciar sesión automáticamente');
       }
     } catch (err) {
       console.error('Error en handleSubmit:', err);
-      Alert.alert(
-        'Error',
-        err.response?.data?.message || 'No se pudo crear el usuario. Intenta de nuevo.'
-      );
+      console.error('Error en handleSubmit:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }

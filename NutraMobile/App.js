@@ -81,7 +81,13 @@ function StackPerfilNavigator({ usuario, setIsAuthenticated }) {
         name="PerfilScreen"
         options={{ headerShown: false }}
       >
-        {(props) => <Perfil {...props} usuario={usuario} setIsAuthenticated={setIsAuthenticated} />}
+        {(props) => (
+          <Perfil
+            {...props}
+            usuario={usuario}
+            setIsAuthenticated={setIsAuthenticated}
+          />
+        )}
       </Stack.Screen>
     </Stack.Navigator>
   );
@@ -138,15 +144,20 @@ function MyTabs({ usuario }) {
       />
       <Tab.Screen
         name="perfil"
-        children={() => (<StackPerfilNavigator usuario={usuario} setIsAuthenticated={setIsAuthenticated}
-    />
-  )}
-  options={{
-    tabBarIcon: ({ color, size }) => (
-      <Ionicons name="person-outline" size={26} color={color} />
-    ),
-  }}
-/>
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="person-outline" size={26} color={color} />
+          ),
+        }}
+      >
+        {(props) => (
+          <StackPerfilNavigator
+            {...props}
+            usuario={usuario}
+            setIsAuthenticated={setIsAuthenticated}
+          />
+        )}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
@@ -175,32 +186,29 @@ export default function App() {
           const now = Date.now() / 1000;
 
           if (decoded.exp && decoded.exp > now) {
-            // Intentamos traer usuario
-            let userData;
             try {
               const res = await fetch(
                 `https://actively-close-beagle.ngrok-free.app/usuarios/${decoded.id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
-              if (res.ok) userData = await res.json();
-            } catch (err) {
-              console.warn("No se pudo cargar usuario desde API, cargando de AsyncStorage...");
-              const storedUser = await AsyncStorage.getItem("usuario");
-              if (storedUser) userData = JSON.parse(storedUser);
+          
+              if (!res.ok) throw new Error("Token inválido en backend");
+          
+              const userData = await res.json();
+              setIsAuthenticated(true);
+              setUsuario(userData);
+              await AsyncStorage.setItem("usuario", JSON.stringify(userData));
+          
+              const expiresIn = decoded.exp - now;
+              logoutTimer = setTimeout(handleLogout, expiresIn * 1000);
+              return;
+            } catch (e) {
+              console.log("⚠️ Token expirado en backend, forzando logout");
+              handleLogout();
+              return;
             }
-
-            if (!userData) userData = {}; // fallback
-
-            setIsAuthenticated(true);
-            setUsuario(userData);
-
-            await AsyncStorage.setItem("usuario", JSON.stringify(userData));
-
-            // Timer de expiración
-            const expiresIn = decoded.exp - now;
-            logoutTimer = setTimeout(handleLogout, expiresIn * 1000);
-            return;
           }
+          
         }
 
         handleLogout();
