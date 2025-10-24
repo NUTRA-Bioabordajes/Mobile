@@ -31,7 +31,7 @@ export default function Recetas() {
         if (storedUser) setUsuario(JSON.parse(storedUser));
         if (storedToken) setToken(storedToken);
       } catch (err) {
-        console.error("Error cargando usuario o token:", err);
+        console.log("Error cargando usuario o token:", err);
         setError('Error al cargar usuario');
       }
     };
@@ -50,7 +50,7 @@ export default function Recetas() {
         const data = await res.json();
         setRecetas(data || []);
       } catch (err) {
-        console.error('Error cargando recetas:', err);
+        console.log('Error cargando recetas:', err);
         setError('No se pudieron cargar las recetas');
       } finally {
         setLoading(false);
@@ -80,7 +80,7 @@ export default function Recetas() {
         }
         setFavoritos(favMap);
       } catch (err) {
-        console.error("Error cargando favoritos recetas:", err);
+        console.log("Error cargando favoritos recetas:", err);
       }
     };
   
@@ -105,7 +105,7 @@ export default function Recetas() {
       });
 
       if (!res.ok) {
-        console.error('Error modificando favorito:', await res.text());
+        console.log('Error modificando favorito:', await res.text());
         return;
       }
 
@@ -114,7 +114,7 @@ export default function Recetas() {
         [idReceta]: !prev[idReceta]
       }));
     } catch (err) {
-      console.error("Error al modificar favorito:", err);
+      console.log("Error al modificar favorito:", err);
     }
   };
 

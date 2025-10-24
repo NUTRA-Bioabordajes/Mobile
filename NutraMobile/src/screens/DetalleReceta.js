@@ -25,7 +25,7 @@ export default function DetalleReceta() {
         setIngredientes(data);
         console.log('ingredientes recibidos:', data);
       } catch (err) {
-        console.error('Error cargando ingredientes:', err.message || err);
+        console.log('Error cargando ingredientes:', err.message || err);
         setError(err.response?.data?.message || err.message);
       }
     };

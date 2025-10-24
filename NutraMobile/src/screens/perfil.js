@@ -32,7 +32,7 @@ export default function Perfil({ setIsAuthenticated }) {
         }
         setUsuario(JSON.parse(storedUser));
       } catch (err) {
-        console.error("Error cargando usuario:", err);
+        console.log("Error cargando usuario:", err);
         setError("No se pudo cargar el usuario.");
       }
     };
@@ -48,7 +48,7 @@ export default function Perfil({ setIsAuthenticated }) {
         const res = await api.get(`/usuarios/${usuario.id}/intolerancias`);
         setIntolerancias(res.data || []);
       } catch (err) {
-        console.error("Error fetching intolerancias:", err);
+        console.log("Error fetching intolerancias:", err);
         setError(err.message || "Error cargando intolerancias");
       }
     };
@@ -62,7 +62,7 @@ export default function Perfil({ setIsAuthenticated }) {
       await AsyncStorage.removeItem("token");
       safeResetToLogin();
     } catch (err) {
-      console.error("Error al cerrar sesión:", err);
+      console.log("Error al cerrar sesión:", err);
       setError("No se pudo cerrar sesión.");
     }
   };*/

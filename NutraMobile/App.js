@@ -205,7 +205,7 @@ export default function App() {
 
         handleLogout();
       } catch (err) {
-        console.error("Error verificando token:", err);
+        console.log("Error verificando token:", err);
         handleLogout();
       }
     };

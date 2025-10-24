@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
   Text,
@@ -66,7 +67,7 @@ export default function Signin() {
         const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
         setIntoleranciasDisponibles(data);
       } catch (err) {
-        console.error('Error cargando intolerancias:', err.message);
+        console.log('Error cargando intolerancias:', err.message);
         Alert.alert('Error', 'No se pudieron cargar las intolerancias');
       }
     };
@@ -77,7 +78,7 @@ export default function Signin() {
         const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
         setMedicos(data);
       } catch (err) {
-        console.error('Error cargando medicos:', err.message);
+        console.log('Error cargando medicos:', err.message);
         Alert.alert('Error', 'No se pudieron cargar los médicos');
       }
     };
@@ -125,19 +126,52 @@ export default function Signin() {
       intolerancias: intolerancias.map(id => Number(id)),
     };
   
+    // Convertimos vencimiento a formato YYYY-MM-DD si existe
     if (formData.certificado && formData.vencimiento) {
       const [month, year] = formData.vencimiento.split('/');
-      dataToSend.vencimiento = `${year}-${month}-01`; 
+      dataToSend.vencimiento = `${year}-${month}-01`;
     } else {
-      dataToSend.vencimiento = null; 
+      dataToSend.vencimiento = null;
     }
-    console.log(dataToSend)
+  
+    console.log('Datos a enviar:', dataToSend);
     setLoading(true);
+  
     try {
-      await axios.post('https://actively-close-beagle.ngrok-free.app/usuarios/nuevoUsuario', dataToSend);
-      Alert.alert('Éxito', 'Usuario creado exitosamente');
-      navigation.navigate('Home');
+      // 1️⃣ Crear usuario
+      await axios.post(
+        'https://actively-close-beagle.ngrok-free.app/usuarios/nuevoUsuario',
+        dataToSend
+      );
+  
+      // 2️⃣ Login automático
+      const loginRes = await axios.post(
+        'https://actively-close-beagle.ngrok-free.app/login',
+        {
+          username: formData.dni,
+          password: formData.password,
+        }
+      );
+  
+      console.log('Respuesta login:', loginRes.data);
+  
+      if (loginRes.data?.token) {
+        await AsyncStorage.setItem('token', loginRes.data.token);
+  
+        // Guardamos usuario solo si existe
+        if (loginRes.data.usuario) {
+          await AsyncStorage.setItem('usuario', JSON.stringify(loginRes.data.usuario));
+        } else {
+          console.warn('No se recibió usuario en el login');
+        }
+  
+        Alert.alert('Bienvenido', 'Cuenta creada y sesión iniciada');
+        navigation.navigate('Home');
+      } else {
+        Alert.alert('Error', 'No se pudo iniciar sesión automáticamente');
+      }
     } catch (err) {
+      console.error('Error en handleSubmit:', err);
       Alert.alert(
         'Error',
         err.response?.data?.message || 'No se pudo crear el usuario. Intenta de nuevo.'
@@ -146,6 +180,8 @@ export default function Signin() {
       setLoading(false);
     }
   };
+  
+  
 
   return (
     <KeyboardAvoidingView

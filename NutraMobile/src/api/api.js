@@ -24,7 +24,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error("[API] Error en request:", error.message);
+    console.log("[API] Error en request:", error.message);
     return Promise.reject(error);
   }
 );
@@ -39,7 +39,7 @@ api.interceptors.response.use(
   },
   async (error) => {
     if (!error.response) {
-      console.error("[API] Network Error o timeout:", error.message);
+      console.log("[API] Network Error o timeout:", error.message);
       return Promise.reject(error);
     }
 
@@ -54,10 +54,10 @@ api.interceptors.response.use(
         const { safeResetToLogin } = await import("../navigation/RootNavigation");
         safeResetToLogin();
       } catch (navErr) {
-        console.error("[API] No se pudo navegar al login:", navErr);
+        console.log("[API] No se pudo navegar al login:", navErr);
       }
     } else {
-      console.error(`[API] Error Response ${error.response.status}:`, error.response.data);
+      console.log(`[API] Error Response ${error.response.status}:`, error.response.data);
     }
 
     return Promise.reject(error);
