@@ -168,7 +168,7 @@ export default function Signin() {
         Alert.alert('Bienvenido', 'Cuenta creada y sesión iniciada');
         navigation.reset({
           index: 0,
-          routes: [{ name: 'home' }],
+          routes: [{ name: 'Home' }],
         });
       } else {
         Alert.alert('Error', 'No se pudo iniciar sesión automáticamente');
