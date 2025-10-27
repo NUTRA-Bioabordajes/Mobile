@@ -156,7 +156,7 @@ export default function Signin() {
       console.log('Respuesta login:', loginRes.data);
   
       if (loginRes.data?.token) {
-        await AsyncStorage.setItem('token', loginRes.data.token);
+        await AsyncStorage.setItem('token', loginRes.data.accessToken);
   
         // Guardamos usuario solo si existe
         if (loginRes.data.usuario) {

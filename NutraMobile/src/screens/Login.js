@@ -25,11 +25,11 @@ export default function Login({ navigation, setIsAuthenticated }) {
       console.log("RESPUESTA DEL LOGIN:", res.data);
 
       if (res.data.success === true || res.data.success === "true") {
-        console.log("TOKEN RECIBIDO:", res.data.token);
-        await AsyncStorage.setItem("token", res.data.token);
+        console.log("TOKEN RECIBIDO:", res.data.accessToken);
+        await AsyncStorage.setItem("token", res.data.accessToken);
 
         //  Decodificamos token para sacar ID del usuario
-        const decoded = jwtDecode(res.data.token);
+        const decoded = jwtDecode(res.data.accessToken);
         const userId = decoded.id;
         console.log("Usuario ID del token:", userId);
 
