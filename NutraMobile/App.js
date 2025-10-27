@@ -93,7 +93,7 @@ function StackPerfilNavigator({ usuario, setIsAuthenticated }) {
   );
 }
 // ====================== TABS ======================
-function MyTabs({ usuario }) {
+function MyTabs({ usuario, setIsAuthenticated }) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -245,7 +245,7 @@ export default function App() {
   return (
     <NavigationContainer ref={navigationRef}>
       {isAuthenticated ? (
-        <MyTabs usuario={usuario} />
+    <MyTabs usuario={usuario} setIsAuthenticated={setIsAuthenticated} />
       ) : (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login">

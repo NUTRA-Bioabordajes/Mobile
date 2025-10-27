@@ -146,7 +146,7 @@ export default function Signin() {
   
       // 2️⃣ Login automático
       const loginRes = await axios.post(
-        'https://actively-close-beagle.ngrok-free.app/login',
+        'https://actively-close-beagle.ngrok-free.app/auth/loginApp',
         {
           username: formData.dni,
           password: formData.password,

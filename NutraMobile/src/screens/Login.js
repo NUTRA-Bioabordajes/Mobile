@@ -21,7 +21,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
 
     try {
       // Login
-      const res = await api.post("/login", { username, password });
+      const res = await api.post("/auth/loginApp", { username, password });
       console.log("RESPUESTA DEL LOGIN:", res.data);
 
       if (res.data.success === true || res.data.success === "true") {
