@@ -107,7 +107,7 @@ export default function Perfil({ setIsAuthenticated = () => {} }) {
         </View>
 
         <View style={styles.categoria}>
-          <Text style={styles.subtitulo}>Intolerancias:</Text>
+          <Text style={styles.subtitulo}>Dieta:</Text>
           <View style={styles.tagContainer}>
             {intolerancias.length > 0 ? (
               intolerancias.map((intolerancia, index) => (
@@ -116,7 +116,7 @@ export default function Perfil({ setIsAuthenticated = () => {} }) {
                 </View>
               ))
             ) : (
-              <Text style={{ color: "gray" }}>Sin intolerancias registradas</Text>
+              <Text style={{ color: "gray" }}>Sin dietas registradas</Text>
             )}
           </View>
         </View>
