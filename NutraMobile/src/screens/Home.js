@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, FlatList, Image, Dimensions, StyleSheet, Text, ActivityIndicator, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { 
+  View, FlatList, Image, Dimensions, StyleSheet, Text, 
+  ActivityIndicator, ScrollView, TouchableOpacity, Linking 
+} from 'react-native';
 import { useFonts } from 'expo-font';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 import logoNutra from '../../assets/images/logoNutra.png';
 import fondoTienda from '../../assets/images/fondoTienda.png';
@@ -10,6 +14,7 @@ import fondoTienda from '../../assets/images/fondoTienda.png';
 const { width } = Dimensions.get('window');
 
 export default function Home() {
+  const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
     Inter: require('../../assets/fonts/Inter/Inter_18pt-Regular.ttf'),
   });
@@ -19,30 +24,25 @@ export default function Home() {
   const [novedades, setNovedades] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Obtener novedades desde la API
   useEffect(() => {
     const fetchNovedades = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
-        console.log("🔑 TOKEN ENCONTRADO:", token);
-
         const response = await axios.get(
           'http://actively-close-beagle.ngrok-free.app/novedades/mobile',
           { headers: { Authorization: `Bearer ${token}` } }
         );
-
         setNovedades(response.data || []);
       } catch (error) {
-        console.error('Error cargando novedades:', error);
+        console.log('Error cargando novedades:', error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchNovedades();
   }, []);
 
-  // Auto-scroll del carrusel
+  // Auto-scroll
   useEffect(() => {
     if (novedades.length === 0) return;
 
@@ -63,48 +63,61 @@ export default function Home() {
     );
   }
 
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      {item.flyer ? (
-        <Image source={{ uri: item.flyer }} style={styles.cardImage} />
-      ) : (
-        <View style={[styles.cardImage, { backgroundColor: '#ddd', justifyContent: 'center', alignItems: 'center' }]}>
-          <Text style={{ color: '#777' }}>Sin imagen</Text>
-        </View>
-      )}
-      <View style={styles.cardTextContainer}>
-        <Text style={styles.nombre}>{item.nombre}</Text>
-        <Text style={styles.descripcion}>{item.descripcion}</Text>
-      </View>
-    </View>
-  );
+  const cardWidth = width * 0.7;
+  const separatorWidth = (width - cardWidth) / 2;
+  const carouselData = [...novedades, ...novedades]; // duplicamos para carrusel infinito
 
-  // Duplicamos los datos para simular carrusel infinito
-  const carouselData = [...novedades, ...novedades];
+  const renderItem = ({ item, index }) => {
+    const isActive = index % novedades.length === currentIndex;
+
+    return (
+      <TouchableOpacity
+        style={[styles.card, isActive && styles.activeCard]}
+        onPress={() => navigation.navigate('DetalleNovedad', { novedad: item })}
+        activeOpacity={0.8}
+      >
+        {item.flyer ? (
+          <Image source={{ uri: item.flyer }} style={styles.cardImage} />
+        ) : (
+          <View style={[styles.cardImage, { backgroundColor: '#ddd', justifyContent: 'center', alignItems: 'center' }]}>
+            <Text style={{ color: '#777' }}>Sin imagen</Text>
+          </View>
+        )}
+        <View style={styles.cardTextContainer}>
+          <Text style={[styles.nombre, isActive && styles.activeNombre]}>{item.nombre}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: '#FCF9F2', paddingBottom: 50 }}>
+    <ScrollView
+      contentContainerStyle={{ backgroundColor: '#FCF9F2', paddingBottom: 30 }}
+      showsVerticalScrollIndicator={false}
+    >
       <Image source={logoNutra} style={styles.img} />
-      
+
       {novedades.length > 0 ? (
-        <FlatList
-          ref={flatListRef}
-          data={carouselData}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={(event) => {
-            let index = Math.floor(event.nativeEvent.contentOffset.x / width);
-            if (index >= novedades.length) {
-              index = index % novedades.length;
-              flatListRef.current.scrollToIndex({ index, animated: false });
-            }
-            setCurrentIndex(index % novedades.length);
-          }}
-          style={{ flexGrow: 0, marginVertical: 20 }}
-        />
+        <View style={{ marginVertical: 20 }}>
+          <FlatList
+            ref={flatListRef}
+            data={carouselData}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => `${item.id}-${index}`}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToAlignment="start"
+            snapToInterval={cardWidth}
+            decelerationRate="fast"
+            onMomentumScrollEnd={(event) => {
+              let index = Math.round(event.nativeEvent.contentOffset.x / cardWidth);
+              if (index >= novedades.length) index = index % novedades.length;
+              setCurrentIndex(index % novedades.length);
+            }}
+            contentContainerStyle={{ paddingHorizontal: separatorWidth }}
+            ItemSeparatorComponent={() => <View style={{ width: separatorWidth / 2 }} />}
+          />
+        </View>
       ) : (
         <View style={{ alignItems: 'center', marginTop: 40 }}>
           <Text style={{ fontFamily: 'Inter', fontSize: 16, color: '#777' }}>
@@ -113,7 +126,6 @@ export default function Home() {
         </View>
       )}
 
-      {/* BOTÓN CON IMAGEN DE FONDO */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => Linking.openURL('https://bioabordajes.org.ar/productos/')}>
           <Image source={fondoTienda} style={styles.buttonBg} />
@@ -127,77 +139,35 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FCF9F2', 
-  },
+  container: { flex: 1, backgroundColor: '#FCF9F2' },
   img: {
-    width: width * 0.3,
-    height: undefined,
+    width: width * 0.4,
     aspectRatio: 1,
     resizeMode: 'contain',
     alignSelf: 'center',
-    marginTop: 30,
-    marginBottom: 20
+    paddingTop: 50,
   },
   card: {
-    width: width * 0.8,
+    width: width * 0.7,
     borderRadius: 16,
     backgroundColor: '#fff',
     overflow: 'hidden',
     shadowColor: '#000000',
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.3,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
-    marginHorizontal: width * 0.05 / 2,
-    marginLeft: 10
+    marginHorizontal: 5,
   },
-  cardImage: {
-    width: '100%',
-    height: 180,
-    resizeMode: 'cover',
+  activeCard: {
+    transform: [{ scale: 1.05 }],
   },
-  cardTextContainer: {
-    padding: 12,
-  },
-  nombre: {
-    fontFamily: 'Inter',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 6,
-  },
-  descripcion: {
-    fontFamily: 'Inter',
-    fontSize: 14,
-    color: '#555',
-  },
-  buttonContainer: {
-    width: width,
-    alignItems: 'center',
-    marginTop: 30,
-    marginBottom: 30,
-  },
-  buttonBg: {
-    width: width * 0.9,
-    height: 120,
-    borderRadius: 20,
-    resizeMode: 'cover',
-  },
-  buttonTextContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: width * 0.9,
-    height: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontFamily: 'Inter',
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#fff',
-  },
+  cardImage: { width: '100%', height: 150, resizeMode: 'cover' },
+  cardTextContainer: { padding: 10, alignItems: 'center' },
+  nombre: { fontFamily: 'Inter', fontSize: 16, fontWeight: '600', color: '#333' },
+  activeNombre: { color: '#007AFF' },
+  buttonContainer: { width: width, alignItems: 'center', marginTop: 30, marginBottom: 30 },
+  buttonBg: { width: width * 0.9, height: 80, borderRadius: 20, resizeMode: 'cover' },
+  buttonTextContainer: { position: 'absolute', top: 0, left: 0, width: width * 0.9, height: 80, justifyContent: 'center', alignItems: 'center' },
+  buttonText: { fontFamily: 'Inter', fontSize: 20, fontWeight: '700', color: '#fff' },
 });

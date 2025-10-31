@@ -17,6 +17,7 @@ import Recetas from "./src/screens/Recetas";
 import DetalleReceta from "./src/screens/DetalleReceta";
 import Login from "./src/screens/Login";
 import Signin from "./src/screens/Signin";
+import DetalleNovedad from "./src/screens/DetalleNovedad";
 
 // ====================== STACKS ======================
 const Stack = createNativeStackNavigator();
@@ -30,10 +31,14 @@ function StackHomeNavigator() {
         options={{ headerShown: false }}
         component={Home}
       />
+      <Stack.Screen
+        name="DetalleNovedad"
+        options={{ headerShown: false }}
+        component={DetalleNovedad}
+      />
     </Stack.Navigator>
   );
 }
-
 
 
 function StackRecetasNavigator({ usuario }) {

@@ -174,8 +174,8 @@ export default function Signin() {
         Alert.alert('Error', 'No se pudo iniciar sesión automáticamente');
       }
     } catch (err) {
-      console.error('Error en handleSubmit:', err);
-      console.error('Error en handleSubmit:', err.response?.data || err.message);
+      console.log('Error en handleSubmit:', err);
+      console.log('Error en handleSubmit:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
