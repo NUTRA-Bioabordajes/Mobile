@@ -1,16 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from '../../assets/styles/styles.js';
 import { useFonts } from 'expo-font';
-import { safeResetToLogin } from '../navigation/RootNavigation.js';
 import api from '../api/api.js';
 
 export default function Perfil({ setIsAuthenticated = () => {} }) {
-  {
   const [usuario, setUsuario] = useState(null);
   const [intolerancias, setIntolerancias] = useState([]);
   const [error, setError] = useState(null);
@@ -26,8 +24,7 @@ export default function Perfil({ setIsAuthenticated = () => {} }) {
       try {
         const storedUser = await AsyncStorage.getItem("usuario");
         if (!storedUser) {
-          // No hay usuario guardado, redirigir al login
-          safeResetToLogin();
+          setIsAuthenticated(false); // vuelve al login automáticamente
           return;
         }
         setUsuario(JSON.parse(storedUser));
@@ -43,7 +40,6 @@ export default function Perfil({ setIsAuthenticated = () => {} }) {
   useEffect(() => {
     const fetchIntolerancias = async () => {
       if (!usuario?.id) return;
-
       try {
         const res = await api.get(`/usuarios/${usuario.id}/intolerancias`);
         setIntolerancias(res.data || []);
@@ -55,23 +51,17 @@ export default function Perfil({ setIsAuthenticated = () => {} }) {
     fetchIntolerancias();
   }, [usuario]);
 
-  // 🔹 Logout
- /* const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem("usuario");
-      await AsyncStorage.removeItem("token");
-      safeResetToLogin();
-    } catch (err) {
-      console.log("Error al cerrar sesión:", err);
-      setError("No se pudo cerrar sesión.");
-    }
-  };*/
-
+  // 🔹 Logout limpio (sin safeResetToLogin)
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("usuario");
-    setIsAuthenticated(false); 
-    safeResetToLogin();        
+  
+    // 🔹 Limpiar el token del header de Axios
+    delete api.defaults.headers.common['Authorization'];
+  
+    setIsAuthenticated(false);
+    setUsuario(null);
+    safeResetToLogin();
   };
 
   if (!usuario) {
@@ -85,7 +75,15 @@ export default function Perfil({ setIsAuthenticated = () => {} }) {
 
       {/* Datos de usuario */}
       <View style={styles.user}>
-        <Image source={{ uri: usuario.foto }} resizeMode='cover' style={styles.fotoPerfil} />
+      <Image 
+        source={{ 
+          uri: usuario.foto?.trim() 
+              ? usuario.foto 
+              : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+        }} 
+        resizeMode='cover' 
+        style={styles.fotoPerfil} 
+      />
         <View style={{ margin: 20 }}>
           <Text style={styles.nombre}>{usuario.nombre} {usuario.apellido}</Text>
           <View style={styles.barrio}>
@@ -146,4 +144,4 @@ export default function Perfil({ setIsAuthenticated = () => {} }) {
       {error && <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>}
     </SafeAreaView>
   );
-}}
+}

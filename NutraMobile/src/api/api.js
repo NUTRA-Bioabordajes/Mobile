@@ -10,8 +10,8 @@ const api = axios.create({
   timeout: TIMEOUT,
 });
 
-
-// 1 Interceptor de REQUEST
+// -------------------------
+// 1️⃣ Interceptor de REQUEST
 // -------------------------
 api.interceptors.request.use(
   async (config) => {
@@ -19,6 +19,8 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       console.log("[API] Token enviado en header:", token);
+    } else {
+      delete config.headers.Authorization; // limpiar si no hay token
     }
     console.log(`[API] Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
@@ -43,19 +45,16 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // 401 o 403 → token inválido o expirado
     if (error.response.status === 401 || error.response.status === 403) {
-      console.warn("[API] Token expirado o inválido. Cerrando sesión…");
+      console.warn("[API] Token expirado o inválido, limpiando sesión…");
 
+      // 🔹 Limpiar AsyncStorage
       await AsyncStorage.removeItem("token");
-      await AsyncStorage.removeItem("usuario"); // también limpiar usuario
+      await AsyncStorage.removeItem("usuario");
 
-      // Redirigir al login
-      try {
-        const { safeResetToLogin } = await import("../navigation/RootNavigation");
-        safeResetToLogin();
-      } catch (navErr) {
-        console.log("[API] No se pudo navegar al login:", navErr);
-      }
+      // 🔹 Limpiar Authorization por si Axios sigue usando el token viejo
+      delete api.defaults.headers.common["Authorization"];
     } else {
       console.log(`[API] Error Response ${error.response.status}:`, error.response.data);
     }
@@ -63,6 +62,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 export default api;
