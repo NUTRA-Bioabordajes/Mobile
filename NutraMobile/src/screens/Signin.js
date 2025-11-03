@@ -78,7 +78,7 @@ export default function Signin() {
         const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
         setMedicos(data);
       } catch (err) {
-        console.log('Error cargando medicos:', err.message);
+        console.log('Error cargando médicos:', err.message);
         Alert.alert('Error', 'No se pudieron cargar los médicos');
       }
     };
@@ -120,12 +120,12 @@ export default function Signin() {
 
   const handleSubmit = async () => {
     if (!validate()) return;
-  
+
     const dataToSend = {
       ...formData,
       intolerancias: intolerancias.map(id => Number(id)),
     };
-  
+
     // Convertimos vencimiento a formato YYYY-MM-DD si existe
     if (formData.certificado && formData.vencimiento) {
       const [month, year] = formData.vencimiento.split('/');
@@ -133,55 +133,40 @@ export default function Signin() {
     } else {
       dataToSend.vencimiento = null;
     }
-  
+
     console.log('Datos a enviar:', dataToSend);
     setLoading(true);
-  
+
     try {
       // 1️⃣ Crear usuario
       await axios.post(
         'https://actively-close-beagle.ngrok-free.app/usuarios/nuevoUsuario',
         dataToSend
       );
-  
-      // 2️⃣ Login automático
-      const loginRes = await axios.post(
-        'https://actively-close-beagle.ngrok-free.app/auth/loginApp',
-        {
-          username: formData.dni,
-          password: formData.password,
-        }
+
+      // ✅ Avisar y redirigir al login
+      Alert.alert(
+        'Cuenta creada',
+        'Tu usuario se creó correctamente. Iniciá sesión para continuar.',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+              });
+            },
+          },
+        ]
       );
-  
-      console.log('Respuesta login:', loginRes.data);
-  
-      if (loginRes.data?.token) {
-        await AsyncStorage.setItem('token', loginRes.data.accessToken);
-  
-        // Guardamos usuario solo si existe
-        if (loginRes.data.usuario) {
-          await AsyncStorage.setItem('usuario', JSON.stringify(loginRes.data.usuario));
-        } else {
-          console.warn('No se recibió usuario en el login');
-        }
-  
-        Alert.alert('Bienvenido', 'Cuenta creada y sesión iniciada');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Home' }],
-        });
-      } else {
-        Alert.alert('Error', 'No se pudo iniciar sesión automáticamente');
-      }
     } catch (err) {
-      console.log('Error en handleSubmit:', err);
       console.log('Error en handleSubmit:', err.response?.data || err.message);
+      Alert.alert('Error', 'No se pudo crear el usuario');
     } finally {
       setLoading(false);
     }
   };
-  
-  
 
   return (
     <KeyboardAvoidingView
@@ -271,7 +256,7 @@ export default function Signin() {
           onChangeText={t => handleChange('barrio', t)}
         />
 
-        {/* Selección de médico tratante (único) */}
+        {/* Selección de médico tratante */}
         <Text style={styles.label}>Médico tratante</Text>
         {medicos.map(item => (
           <TouchableOpacity
@@ -286,10 +271,8 @@ export default function Signin() {
           </TouchableOpacity>
         ))}
 
-        
-
-        {/* Intolerancias (múltiple) */}
-        <Text style={styles.label}>Intolerancias</Text>
+        {/* Intolerancias */}
+        <Text style={styles.label}>Dietas</Text>
         {intoleranciasDisponibles.map(item => (
           <TouchableOpacity
             key={item.idIntolerancias}

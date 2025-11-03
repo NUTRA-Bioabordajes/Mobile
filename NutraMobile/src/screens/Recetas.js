@@ -44,7 +44,7 @@ export default function Recetas() {
 
     const loadRecetas = async () => {
       try {
-        const res = await fetch('https://actively-close-beagle.ngrok-free.app/recetas', {
+        const res = await fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${usuario.id}/recetas`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
