@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet, ActivityIndicator } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api/api.js';
 
@@ -26,9 +26,12 @@ const Favoritos = () => {
     }
   };
 
-  useEffect(() => {
-    fetchFavoritos();
-  }, []);
+  // 👇 Esto reemplaza el useEffect
+  useFocusEffect(
+    useCallback(() => {
+      fetchFavoritos();
+    }, [])
+  );
 
   const renderItem = ({ item, index }) => {
     const backgroundColor = coloresFondo[index % coloresFondo.length];
@@ -53,7 +56,7 @@ const Favoritos = () => {
       <Text style={styles.title}>Mis Recetas Favoritas</Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#CBD2E2"/>
+        <ActivityIndicator size="large" color="#CBD2E2" />
       ) : favoritos.length === 0 ? (
         <Text style={styles.emptyText}>No hay recetas favoritas aún</Text>
       ) : (
@@ -97,7 +100,7 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 14,
     height: 150,
-    margin: 4
+    margin: 4,
   },
   image: {
     width: 75,

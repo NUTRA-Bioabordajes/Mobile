@@ -61,13 +61,13 @@ export default function DetalleReceta() {
 
         {/* Nombre y favorito */}
         <Text style={detalleRecetaStyles.titulo}>{receta.Nombre}</Text>
-        <TouchableOpacity onPress={() => toggleFavorito(receta.idReceta)} style={{ alignSelf: 'center', marginVertical: 8 }}>
+        {/*<TouchableOpacity onPress={() => toggleFavorito(receta.idReceta)} style={{ alignSelf: 'center', marginVertical: 8 }}>
           <Ionicons
             name={favoritos[receta.idReceta] ? 'heart' : 'heart-outline'}
             size={30}
             color={favoritos[receta.idReceta] ? 'red' : 'black'}
           />
-        </TouchableOpacity>
+        </TouchableOpacity>*/}
 
         {/* Descripción */}
         <Text style={detalleRecetaStyles.descripcionTitulo}>Descripción</Text>
