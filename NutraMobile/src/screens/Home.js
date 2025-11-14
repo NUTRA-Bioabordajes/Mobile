@@ -91,6 +91,7 @@ export default function Home() {
   };
 
   return (
+    <View style={{ flex: 1, backgroundColor: '#FCF9F2' }}>
     <ScrollView
       contentContainerStyle={{ backgroundColor: '#FCF9F2', paddingBottom: 30 }}
       showsVerticalScrollIndicator={false}
@@ -135,6 +136,7 @@ export default function Home() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </View>
   );
 }
 
