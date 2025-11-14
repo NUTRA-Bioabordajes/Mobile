@@ -21,8 +21,19 @@ export default function Recetas() {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(0); // 0 = Todas
 
-  // Cargar usuario y token desde AsyncStorage
+  const categorias = [
+    { id: 0, Nombre: 'Todas' },
+    { id: 1, Nombre: 'Desayuno' },
+    { id: 2, Nombre: 'Bebidas' },
+    { id: 3, Nombre: 'Snacks' },
+    { id: 4, Nombre: 'Postres' },
+    { id: 5, Nombre: 'Plato Principal' },
+    { id: 6, Nombre: 'Acompañamiento' }
+  ];
+
+  // Cargar usuario y token
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -38,9 +49,9 @@ export default function Recetas() {
     loadUser();
   }, []);
 
-  // Cargar recetas desde la API
+  // Cargar recetas
   useEffect(() => {
-    if (!token) return;
+    if (!token || !usuario) return;
 
     const loadRecetas = async () => {
       try {
@@ -58,9 +69,9 @@ export default function Recetas() {
     };
 
     loadRecetas();
-  }, [token]);
+  }, [token, usuario]);
 
-  // Cargar favoritos del usuario
+  // Cargar favoritos
   useEffect(() => {
     if (!token) return;
   
@@ -70,7 +81,6 @@ export default function Recetas() {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
-        console.log("Favoritos recetas recibidos:", data);
   
         const favMap = {};
         if (Array.isArray(data)) {
@@ -122,33 +132,75 @@ export default function Recetas() {
 
   if (error) return <Text style={{ color: 'red', textAlign: 'center', marginTop: 20 }}>{error}</Text>;
 
+  // Filtrar recetas según idCategoria
+  const recetasFiltradas = categoriaSeleccionada === 0 
+    ? recetas 
+    : recetas.filter(r => Number(r.idCategoria) === categoriaSeleccionada);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.titulo}>Recetas</Text>
 
+      {/* FILTROS TIPO CHIPS */}
+      <View style={{ height: 50, justifyContent: 'center' }}>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 10 }}
+        >
+          {categorias.map(cat => (
+            <TouchableOpacity
+              key={cat.id}
+              onPress={() => setCategoriaSeleccionada(cat.id)}
+              activeOpacity={0.8}
+              style={{
+                paddingVertical: 8,
+                paddingHorizontal: 16, // ancho variable según texto
+                borderRadius: 20,
+                marginHorizontal: 5,
+                backgroundColor: categoriaSeleccionada === cat.id ? '#E4CCC9' : '#E0E0E0',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text style={{ 
+                color: categoriaSeleccionada === cat.id ? '#fff' : '#000', 
+                fontWeight: '500',
+                textAlign: 'center'
+              }}>
+                {cat.Nombre}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* LISTA DE RECETAS */}
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={styles.contenedorProductos}>
-          {recetas.map(receta => (
-            <Pressable
-              key={receta.idReceta}
-              style={styles.cardProducto}
-              onPress={() => navigation.navigate('DetalleReceta', { receta })}
-            >
-              <Image
-                source={{ uri: receta.Foto }}
-                resizeMode='contain'
-                style={styles.imagenProducto}
-              />
-              <Text style={styles.nombreProducto}>{receta.Nombre}</Text>
-              <TouchableOpacity onPress={() => toggleFavorito(receta.idReceta)}>
-                <Ionicons
-                  name={favoritos[receta.idReceta] ? 'heart' : 'heart-outline'}
-                  size={30}
-                  color={favoritos[receta.idReceta] ? 'red' : 'black'}
+          {recetasFiltradas.length === 0 
+            ? <Text style={{ textAlign: 'center', marginTop: 20 }}>No hay recetas en esta categoría</Text>
+            : recetasFiltradas.map(receta => (
+              <Pressable
+                key={receta.idReceta}
+                style={styles.cardProducto}
+                onPress={() => navigation.navigate('DetalleReceta', { receta })}
+              >
+                <Image
+                  source={{ uri: receta.Foto }}
+                  resizeMode='contain'
+                  style={styles.imagenProducto}
                 />
-              </TouchableOpacity>
-            </Pressable>
+                <Text style={styles.nombreProducto}>{receta.Nombre}</Text>
+                <TouchableOpacity onPress={() => toggleFavorito(receta.idReceta)}>
+                  <Ionicons
+                    name={favoritos[receta.idReceta] ? 'heart' : 'heart-outline'}
+                    size={30}
+                    color={favoritos[receta.idReceta] ? 'red' : 'black'}
+                  />
+                </TouchableOpacity>
+              </Pressable>
           ))}
         </View>
       </ScrollView>
