@@ -103,12 +103,12 @@ export default function DetalleReceta() {
 
         {/* Botón Preparar */}
         <View style={detalleRecetaStyles.botonContainer}>
-          <TouchableOpacity
-            style={detalleRecetaStyles.botonPreparar}
-            onPress={() => console.log("Preparar receta")}
-          >
-            <Text style={detalleRecetaStyles.botonTexto}>¡Preparar!</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={detalleRecetaStyles.botonPreparar}
+          onPress={() => navigation.navigate("Preparacion", { receta })}
+        >
+          <Text style={detalleRecetaStyles.botonTexto}>¡Preparar!</Text>
+        </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

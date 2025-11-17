@@ -52,22 +52,37 @@ export default function Recetas() {
   // Cargar recetas
   useEffect(() => {
     if (!token || !usuario) return;
-
+  
     const loadRecetas = async () => {
       try {
         const res = await fetch(`https://actively-close-beagle.ngrok-free.app/usuarios/${usuario.id}/recetas`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        const data = await res.json();
-        setRecetas(data || []);
+  
+        const text = await res.text();
+  
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          console.log("Respuesta NO JSON del servidor:", text);
+          data = [];
+        }
+  
+        console.log("DATA RECETAS:", data);
+  
+        // Asegurar que siempre sea un array:
+        setRecetas(Array.isArray(data) ? data : []);
+  
       } catch (err) {
         console.log('Error cargando recetas:', err);
         setError('No se pudieron cargar las recetas');
+        setRecetas([]);
       } finally {
         setLoading(false);
       }
     };
-
+  
     loadRecetas();
   }, [token, usuario]);
 
